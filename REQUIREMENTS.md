@@ -1,6 +1,19 @@
 ## Use Cases
 
 ```
+Title: Add Item To Cart
+Actor: Customer
+
+Scenario: Customer texts the bot to add an item and quantity thereof to the cart. If an alias
+exists, the bot will use the alias. If not, the bot will search for the top 5-10 matches
+and send them to the user for the user to decide. If it is not found, the user will ask for
+more options. Upon successfully adding an item to the cart, the bot will also ask the user
+if it would like to create a new alias for that item.
+```
+
+***
+
+```
 Title: View/Edit Item Aliases
 Actor: Customer
 
@@ -12,13 +25,15 @@ item and add the corresponding quantities to a physical cart.
 ```
 
 #### Questions:
+ - High-level interface to set an initial alias:
+ 	- `SET ALIAS "avacado" = http://amazon.com/organic_haas_avacado.html` 
  - Would you like to have aliases that are based on item and quantity?
  	- e.g. `SET ALIAS "week supply of avacados" = 5 "avacados"`
  - Would you like to have nested aliases?
  	- e.g. `SET ALIAS "week food" = 4 "apples", "week supply of avacados"`
  - Would you like to extend the concept of aliasing to one-shot orders as well?
  	- e.g. `SET ONE-SHOT ALIAS "week food" = 5 "avacados", 4 "apples", 2 "tabasco"`
-
+ - How else could this interface be more convenient to you?
 
 ***
 
@@ -46,6 +61,7 @@ items, remove any or all of the numbered items, or add more items to the cart.
  		- `Add 2 avacados`
  		- `Remove 1 banana`
  		- `Remove all`
+ - How else could this interface be more convenient to you?
 
 ```
 Title: View/Edit Preferred Delivery Times

@@ -19,6 +19,10 @@ item and add the corresponding quantities to a physical cart.
  - Would you like to extend the concept of aliasing to one-shot orders as well?
  	- e.g. `SET ONE-SHOT ALIAS "week food" = 5 "avacados", 4 "apples", 2 "tabasco"`
 
+
+***
+
+
 ```
 Title: View/Edit Items In Cart
 Actor: Customer
@@ -52,6 +56,10 @@ as times that are entirely unacceptable. Time preferences can be even more granu
 example, 1-2pm is ok on Monday, Tuesday, and Wednesday, but not on Thursday or Friday.
 ```
 
+
+***
+
+
 ```
 Title: View/Edit Subtotal Trigger Quantity
 Actor: Customer
@@ -59,12 +67,20 @@ Actor: Customer
 Scenario: User gets/sets the minimum cart subtotal that must accumulate before the bot executes the order.
 ```
 
+
+***
+
+
 ```
 Title: One-Shot Order
 Actor: Customer
 
 Scenario: User sends bot item(s) to order and execute immediately (after confirmation from the bot).
 ```
+
+
+***
+
 
 ```
 Title: Authorize Order
@@ -78,6 +94,10 @@ Scenario: When an order is ready to be sent, the bot will first confirm the orde
  - We will use OAuth to keep your credentials secure and so that we have no knowledge of them
  - What other security requirements would you like to see?
 
+
+***
+
+
 ```
 Title: Cancel Order In-Flight
 Actor: Customer
@@ -87,6 +107,10 @@ not possible, the bot notifies the user and gives them the ability to get in tou
 support.
 ```
 
+
+***
+
+
 ```
 Title: Get Order Status Update (Pull)
 Actor: Bot/Customer
@@ -94,6 +118,10 @@ Actor: Bot/Customer
 Scenario: User asks bot for order status, and bot replies with most recent or history of updates pertaining 
 to order.
 ```
+
+
+***
+
 
 ```
 Title: Get Order Status Update (Push)
@@ -106,6 +134,10 @@ control which (if any) updates they want to receive on a puish basis.
 #### Questions:
  - What kinds of other order status updates would you like to have?
 
+
+***
+
+
 ```
 Title: View Past Purchases
 Actor: Customer
@@ -115,5 +147,5 @@ Scenario: Customer asks bot for past orders, and bot responds with details of ol
 
 #### Questions:
  - What would you like to see in your past purchase data?
- - Note that the purchase data will only give you data for orders that occured within the app.
- - The app will not give you data about other external Amazon orders.
+ - Note that the purchase data will only give you data for orders that occured within the app
+ - The app will not give you data about other external Amazon orders

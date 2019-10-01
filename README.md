@@ -4,6 +4,6 @@
 
 - The frontend that the user interacts with is the standard Telegram messenger app on whatever platform they are using. The application's backend will be developed primarily in NodeJS. It will use MongoDB as its database.
 
-- We encourage the GitHub community to contribute as they see fit, so long as they abide by the rules set forth [here]. [CONTRIBUTING.md](https://github.com/nyu-software-engineering/fall-2019-groceries/blob/master/CONTRIBUTING.md).
+- We encourage the GitHub community to contribute as they see fit, so long as they abide by the rules set forth [here](https://github.com/nyu-software-engineering/fall-2019-groceries/blob/master/CONTRIBUTING.md).
 
 - Grocery Assistant is developed and maintained by the `groceries` team in NYU's Fall 2019 `CSCI-UA.0480-​010 Special Topics: Agile Software Development and DevOps` course.

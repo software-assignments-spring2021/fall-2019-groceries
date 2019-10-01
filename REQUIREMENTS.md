@@ -146,3 +146,8 @@ Actor: Customer
 
 Scenario: Customer asks bot for past orders, and bot responds with details of old orders.
 ```
+
+
+### Domain Model
+
+![DomainModels](https://user-images.githubusercontent.com/43123370/66007821-deb79c80-e481-11e9-8f05-e5ff2475fe32.png)

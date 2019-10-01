@@ -1,9 +1,42 @@
-## Use Cases
+## Non-Functional Requirements
+
+### Implementation Constraints
+ - The "frontend" will be the Telegram messenger
+ - The backend must be implemented in NodeJS and interact with the Telegram API
+ - The database must be MongoDB
+
+### Speed 
+ - **"Throughput"**: The app must be able to process 100 incoming user requests/second
+ - **"Latency"**: A user request must take no longer than 30 seconds to execute a user request
+ 
+### Size 
+ - The database must occupy no more than 10TB of disk space
+ - The app must utilize no more than 64GB of memory
+ - The app must utilize no more than 16 physical CPU cores
+
+### Reliability 
+ - The app must have no less than 98% uptime
+ - The app must not place erroneous orders on behalf of users
+ - Users must approve every order
+ 
+### Robustness
+ - The app must be able to restart within 5 minutes upon encountering a system failure
+
+### Portability
+ - The application must be abe to run on a Linux (Ubuntu/Debian) server
+ - Any user utilizing the app must be able to do so on any Telegram client
+
+### Security
+ - The app must not have access to unencrypted user credentials
+
+## Functional Requirements
+
+### Use Cases
 
 ```
 Title: Add Item To Cart
 Actor: Customer
-
+	
 Scenario: Customer texts the bot to add an item and quantity thereof to the cart. If an alias
 exists, the bot will use the alias. If not, the bot will search for the top 5-10 matches
 and send them to the user for the user to decide. If it is not found, the user will ask for
@@ -24,19 +57,7 @@ and update aliases for items so that they can text the bot "N alias" instead of 
 item and add the corresponding quantities to a physical cart.
 ```
 
-#### Questions:
- - High-level interface to set an initial alias:
- 	- `SET ALIAS "avacado" = http://amazon.com/organic_haas_avacado.html` 
- - Would you like to have aliases that are based on item and quantity?
- 	- e.g. `SET ALIAS "week supply of avacados" = 5 "avacados"`
- - Would you like to have nested aliases?
- 	- e.g. `SET ALIAS "week food" = 4 "apples", "week supply of avacados"`
- - Would you like to extend the concept of aliasing to one-shot orders as well?
- 	- e.g. `SET ONE-SHOT ALIAS "week food" = 5 "avacados", 4 "apples", 2 "tabasco"`
- - How else could this interface be more convenient to you?
-
 ***
-
 
 ```
 Title: View/Edit Items In Cart
@@ -47,21 +68,7 @@ and their corresponding prices and quantities. The user can then edit quantities
 items, remove any or all of the numbered items, or add more items to the cart.
 ```
 
-#### Questions:
- - Would you ideally like another feature to be able to clear the cart? This would ostensibly be easier than removing items one at a time.
- - Proposed interface:
- 	- User texts `VIEW CART`
- 	- Bot responds: 
- 
- 		```
- 		1) 5 avacados
- 		2) 3 bananas
- 		```
- 	- If user wants to edit item, they could text 
- 		- `Add 2 avacados`
- 		- `Remove 1 banana`
- 		- `Remove all`
- - How else could this interface be more convenient to you?
+***
 
 ```
 Title: View/Edit Preferred Delivery Times
@@ -72,9 +79,7 @@ as times that are entirely unacceptable. Time preferences can be even more granu
 example, 1-2pm is ok on Monday, Tuesday, and Wednesday, but not on Thursday or Friday.
 ```
 
-
 ***
-
 
 ```
 Title: View/Edit Subtotal Trigger Quantity
@@ -83,9 +88,7 @@ Actor: Customer
 Scenario: User gets/sets the minimum cart subtotal that must accumulate before the bot executes the order.
 ```
 
-
 ***
-
 
 ```
 Title: One-Shot Order
@@ -94,9 +97,7 @@ Actor: Customer
 Scenario: User sends bot item(s) to order and execute immediately (after confirmation from the bot).
 ```
 
-
 ***
-
 
 ```
 Title: Authorize Order
@@ -106,13 +107,7 @@ Scenario: When an order is ready to be sent, the bot will first confirm the orde
 (items, quantities, and desired delivery time), and only order upon ack from the user.
 ```
 
-#### Questions:
- - We will use OAuth to keep your credentials secure and so that we have no knowledge of them
- - What other security requirements would you like to see?
-
-
 ***
-
 
 ```
 Title: Cancel Order In-Flight
@@ -123,9 +118,7 @@ not possible, the bot notifies the user and gives them the ability to get in tou
 support.
 ```
 
-
 ***
-
 
 ```
 Title: Get Order Status Update (Pull)
@@ -135,9 +128,7 @@ Scenario: User asks bot for order status, and bot replies with most recent or hi
 to order.
 ```
 
-
 ***
-
 
 ```
 Title: Get Order Status Update (Push)
@@ -147,12 +138,7 @@ Scenario: Bot automatically sends order status updates upon receiving them from 
 control which (if any) updates they want to receive on a puish basis.
 ```
 
-#### Questions:
- - What kinds of other order status updates would you like to have?
-
-
 ***
-
 
 ```
 Title: View Past Purchases
@@ -160,8 +146,3 @@ Actor: Customer
 
 Scenario: Customer asks bot for past orders, and bot responds with details of old orders.
 ```
-
-#### Questions:
- - What would you like to see in your past purchase data?
- - Note that the purchase data will only give you data for orders that occured within the app
- - The app will not give you data about other external Amazon orders

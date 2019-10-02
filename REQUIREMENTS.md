@@ -42,7 +42,7 @@
 - Solution: Provide a simple way to provide groceries at his doorstep, without ever having to step foot in a local market. So simple that with just a simple text message, he can get his groceries delivered to his front door. 
 
 #### Lucas Alberto Seijas
-Place of Birth: Caracas, Venezuela
+- Place of Birth: Caracas, Venezuela
 - Age: 22
 - Occupation: Student at University of Miami
 - Residence: Brickell, Miami

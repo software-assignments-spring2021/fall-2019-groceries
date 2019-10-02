@@ -34,28 +34,28 @@
 ### End-User Personas
 
 #### Enrique Goldman
-Place of Birth: Vancouver, Canada
-Age: 48
-Occupation: Investment Banker, JPMorgan Chase
-Residence: Manhattan, New York
-Life story: Comes from a wealthy family, and has always been truly focused on his career. Studied at Columbia University, and is now an Investment Banker at JPMorgan. Has two children, but due to his recent divorce, has half custody. Very rarely does he see his children, due to always being so caught up in work. Has never step foot in a Supermarket, his wife was always the one to do the groceries. However, he still doesn't have the time or patience to even go to a Supermarket.
-Solution: Provide a simple way to provide groceries at his doorstep, without ever having to step foot in a local market. So simple that with just a simple text message, he can get his groceries delivered to his front door. 
+- Place of Birth: Vancouver, Canada
+- Age: 48
+- Occupation: Investment Banker, JPMorgan Chase
+- Residence: Manhattan, New York
+- Life story: Comes from a wealthy family, and has always been truly focused on his career. Studied at Columbia University, and is now an Investment Banker at JPMorgan. Has two children, but due to his recent divorce, has half custody. Very rarely does he see his children, due to always being so caught up in work. Has never step foot in a Supermarket, his wife was always the one to do the groceries. However, he still doesn't have the time or patience to even go to a Supermarket.
+- Solution: Provide a simple way to provide groceries at his doorstep, without ever having to step foot in a local market. So simple that with just a simple text message, he can get his groceries delivered to his front door. 
 
 #### Lucas Alberto Seijas
 Place of Birth: Caracas, Venezuela
-Age: 22
-Occupation: Student at University of Miami
-Residence: Brickell, Miami
-Life story: Born and raised in Venezuela, had to migrate the country in 2017 by himself, due to political issues. A working student on a tight budget, and has to find a way to cover all his monthly needs with his monthly earnings. Has never been a fan of going to the grocery store, especially alone. Therefore, has been trying to rely on third party delivery services, but truly can't afford all the additional costs and fees. 
-Solution: Provide a simple and affordable way to purchase groceries without the extra shipping costs. Amazon offers free shipping to all orders of $35 or more. However, Lucas does not always know what he wants, so he can't afford to pay shipping for every small order. So the solution we are offering is a simple way to add items to your cart, and once your shipping reaches the $35 threshold, will instantly place the order, and deliver it to his doorstep. 
+- Age: 22
+- Occupation: Student at University of Miami
+- Residence: Brickell, Miami
+- Life story: Born and raised in Venezuela, had to migrate the country in 2017 by himself, due to political issues. A working student on a tight budget, and has to find a way to cover all his monthly needs with his monthly earnings. Has never been a fan of going to the grocery store, especially alone. Therefore, has been trying to rely on third party delivery services, but truly can't afford all the additional costs and fees. 
+- Solution: Provide a simple and affordable way to purchase groceries without the extra shipping costs. Amazon offers free shipping to all orders of $35 or more. However, Lucas does not always know what he wants, so he can't afford to pay shipping for every small order. So the solution we are offering is a simple way to add items to your cart, and once your shipping reaches the $35 threshold, will instantly place the order, and deliver it to his doorstep. 
 
 #### Carla Casillas
-Place of Birth: Barcelona, Spain
-Age: 32
-Occupation: Single Mom, Nurse
-Residence: Brooklyn, New York
-Life story: Carla is a hardworking single mom, that has never received any monetary help from anyone. Had a boyfriend for several months, until she was pregnant with twins. The day she gave birth, was the last day she had seen her boyfriend. It was her job to raise her two kids, while still be able to maintain her job as a nurse at her local hospital. She rarely has time for hobbies or anything else that isn't, taking care of her children, or going to work. Also has the tendency to have her mind all over the place. When she needs something from the supermarket, she writes them down in a sticky note, which tends to get lost easily.
-Solution: Provide an affordable and efficient way to provide groceries to her doorstep, with a single text message. Whenever she needs something in particular, instead of reminding herself, she can simply add the object in her virtual cart with a simple message. Once her cart reaches the $35 threshold, the order will be placed and shipped to her house in hours. 
+- Place of Birth: Barcelona, Spain
+- Age: 32
+- Occupation: Single Mom, Nurse
+- Residence: Brooklyn, New York
+- Life story: Carla is a hardworking single mom, that has never received any monetary help from anyone. Had a boyfriend for several months, until she was pregnant with twins. The day she gave birth, was the last day she had seen her boyfriend. It was her job to raise her two kids, while still be able to maintain her job as a nurse at her local hospital. She rarely has time for hobbies or anything else that isn't, taking care of her children, or going to work. Also has the tendency to have her mind all over the place. When she needs something from the supermarket, she writes them down in a sticky note, which tends to get lost easily.
+- Solution: Provide an affordable and efficient way to provide groceries to her doorstep, with a single text message. Whenever she needs something in particular, instead of reminding herself, she can simply add the object in her virtual cart with a simple message. Once her cart reaches the $35 threshold, the order will be placed and shipped to her house in hours. 
 
 
 ### Use Cases

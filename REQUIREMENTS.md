@@ -115,7 +115,7 @@ Actor: Customer
 Scenario: User gets/sets the minimum cart subtotal that must accumulate before the bot executes the order.
 ```
 
-## User Cases Part 2
+## User Cases Part 1
 ![User Case diagram 1](https://user-images.githubusercontent.com/35755459/66063862-41587900-e512-11e9-99cd-ef2800145006.png)
 ***
 

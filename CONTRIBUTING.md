@@ -21,6 +21,7 @@ Prior to completion, contributions to this project are limited to Grocery team m
     * Ask teammates for help when you feel it is needed.
     * Help teammates when necessary.
     * Check Slack on a regular basis.
+    * Standups on Mondays and Wednesdays at 1:47pm
 
 
 ## Values

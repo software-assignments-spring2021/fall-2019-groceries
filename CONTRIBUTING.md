@@ -8,12 +8,11 @@ Prior to completion, contributions to this project are limited to Grocery team m
     * Heorhii Skovorodnikov
 
 ## Git Workflow
-    Feature Branching Workflow
+    [Feature Branching Workflow](https://knowledge.kitchen/Feature_branch_version_control_workflow)
 
-    1. Create new branch for each issue/feature to be worked on.
+    1. Create new branch for each issue/feature to be worked on using the example linked herein.
     2. Checkout branch locally to ensure changes made to that branch.
     3. Add, commit, push changes to feature branch.
-    4. [Create a new feature branch with a good name](https://knowledge.kitchen/Feature_branch_version_control_workflow)
 
 ## Our Team Expectations & Norms
 

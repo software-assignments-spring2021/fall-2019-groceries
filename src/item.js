@@ -1,8 +1,9 @@
 class Item {
     constructor() {
     	this.cost = null;
+        this.id = null;
     	this.link = null;
-        this.name = null;       
+        this.name = null;
     }
 
     getCost() {
@@ -11,6 +12,14 @@ class Item {
 
     setCost(cost) {
     	this.cost = cost;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    setId(id) {
+        this.id = id;
     }
 
     getLink() {

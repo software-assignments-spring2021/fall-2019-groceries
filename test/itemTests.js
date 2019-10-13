@@ -14,6 +14,11 @@ describe('Item tests', function() {
 		assert.equal(my_item.getCost(), 5);
 	});
 
+	it('test item id modification', function() {
+		my_item.setId(1);
+		assert.equal(my_item.getId(), 1);
+	});
+
 	it('test item link modification', function() {
 		my_item.setLink("amazon.com/my_item");
 		assert.equal(my_item.getLink(), "amazon.com/my_item");

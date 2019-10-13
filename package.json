@@ -23,6 +23,7 @@
     "mocha": "^6.2.1"
   },
   "dependencies": {
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "collections": "^5.1.9"
   }
 }

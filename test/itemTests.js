@@ -15,8 +15,8 @@ describe('Item tests', function() {
 	});
 
 	it('test item id modification', function() {
-		my_item.setId(1);
-		assert.equal(my_item.getId(), 1);
+		my_item.setId("1");
+		assert.equal(my_item.getId(), "1");
 	});
 
 	it('test item link modification', function() {

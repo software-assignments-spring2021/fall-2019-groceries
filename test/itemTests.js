@@ -3,7 +3,11 @@ const {Item} = require("../src/item");
 
 describe('Item tests', function() {
 
-	var my_item = new Item();
+	var my_item;
+
+	beforeEach(function() {
+	 	my_item = new Item();
+	});	
 
 	it('test item cost modification', function() {
 		my_item.setCost(5);

@@ -11,6 +11,10 @@ class Item {
     }
 
     setCost(cost) {
+        if (cost < 0) {
+            return;
+        }
+
     	this.cost = cost;
     }
 

@@ -14,6 +14,11 @@ describe('Item tests', function() {
 		assert.equal(my_item.getCost(), 5);
 	});
 
+	it('test item cost non-negativity', function() {
+		my_item.setCost(-5);
+		assert.equal(my_item.getCost(), null);
+	});
+
 	it('test item id modification', function() {
 		my_item.setId("1");
 		assert.equal(my_item.getId(), "1");

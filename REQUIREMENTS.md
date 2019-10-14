@@ -1,34 +1,3 @@
-## Non-Functional Requirements
-
-### Implementation Constraints
- - The "frontend" will be the Telegram messenger
- - The backend must be implemented in NodeJS and interact with the Telegram API
- - The database must be MongoDB
-
-### Speed 
- - **"Throughput"**: The app must be able to process 100 incoming user requests/second
- - **"Latency"**: A user request must take no longer than 30 seconds to execute a user request
- 
-### Size 
- - The database must occupy no more than 10TB of disk space
- - The app must utilize no more than 64GB of memory
- - The app must utilize no more than 16 physical CPU cores
-
-### Reliability 
- - The app must have no less than 98% uptime
- - The app must not place erroneous orders on behalf of users
- - Users must approve every order
- 
-### Robustness
- - The app must be able to restart within 5 minutes upon encountering a system failure
-
-### Portability
- - The application must be abe to run on a Linux (Ubuntu/Debian) server
- - Any user utilizing the app must be able to do so on any Telegram client
-
-### Security
- - The app must not have access to unencrypted user credentials
-
 ## Functional Requirements
 
 ### End-User Personas

@@ -32,7 +32,9 @@ class Cart {
         var cost = 0;
 
     	for (let cartItem of this.items.values()) {
-            cost += cartItem.getItem().getCost();
+            const itemQuantity = cartItem.getQuantity();
+            const itemCost = cartItem.getItem().getCost();            
+            cost += itemQuantity * itemCost;
         }
 
         return cost;
@@ -51,12 +53,12 @@ class Cart {
         }
     }
 
-    editItemQuantity(item, newQuantity) {
-        this.items.get(item.getId()).setQuantity(newQuantity)
+    getItemQuantity(item) {
+        return this.items.get(item.getId()).getQuantity();
     }
 
     removeItem(item) {
-        this.items.remove(item.getId());
+        this.items.delete(item.getId());
     }
 
     removeAllItems() {
@@ -65,10 +67,6 @@ class Cart {
 
     getItems() {
         return this.items;
-    }
-
-    setItems(items) {
-        this.items = items;
     }
 
     size() {

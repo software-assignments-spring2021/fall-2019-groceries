@@ -7,3 +7,5 @@
 - We encourage the GitHub community to contribute as they see fit, so long as they abide by the rules set forth [here](https://github.com/nyu-software-engineering/fall-2019-groceries/blob/master/CONTRIBUTING.md).
 
 - Grocery Assistant is developed and maintained by the `groceries` team in NYU's Fall 2019 `CSCI-UA.0480-​010 Special Topics: Agile Software Development and DevOps` course.
+
+- Please see our [REQUIREMENTS.md](https://github.com/nyu-software-engineering/fall-2019-groceries/blob/master/REQUIREMENTS.md) for project requirements and implementation specifics

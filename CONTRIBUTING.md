@@ -14,6 +14,7 @@ We will follow [this style of feature branching](https://knowledge.kitchen/Featu
     1. Create new branch for each issue/feature to be worked on using the example linked herein.
     2. Checkout branch locally to ensure changes made to that branch.
     3. Add, commit, push changes to feature branch.
+    4. Issue a pull request to have your changes queued for merge into the trunk.
 
 ## Our Team Expectations & Norms
 
@@ -24,6 +25,9 @@ We will follow [this style of feature branching](https://knowledge.kitchen/Featu
     * Check Slack on a regular basis.
     * Standups on Mondays and Wednesdays at 1:47pm
 
+## Conflict Resolution
+
+    * Majority rules.
 
 ## Values
 

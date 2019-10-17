@@ -3,34 +3,34 @@ const {Item} = require("../src/item");
 
 describe('Item tests', function() {
 
-	var my_item;
+	var myItem;
 
 	beforeEach(function() {
-	 	my_item = new Item();
+	 	myItem = new Item();
 	});	
 
 	it('test item cost modification', function() {
-		my_item.setCost(5);
-		assert.equal(my_item.getCost(), 5);
+		myItem.setCost(5);
+		assert.equal(myItem.getCost(), 5);
 	});
 
 	it('test item cost non-negativity', function() {
-		my_item.setCost(-5);
-		assert.equal(my_item.getCost(), null);
+		myItem.setCost(-5);
+		assert.equal(myItem.getCost(), null);
 	});
 
 	it('test item id modification', function() {
-		my_item.setId("1");
-		assert.equal(my_item.getId(), "1");
+		myItem.setId("1");
+		assert.equal(myItem.getId(), "1");
 	});
 
 	it('test item link modification', function() {
-		my_item.setLink("amazon.com/my_item");
-		assert.equal(my_item.getLink(), "amazon.com/my_item");
+		myItem.setLink("amazon.com/myItem");
+		assert.equal(myItem.getLink(), "amazon.com/myItem");
 	});
 
 	it('test item name modification', function() {
-		my_item.setName("avocado");
-		assert.equal(my_item.getName(), "avocado");
+		myItem.setName("avocado");
+		assert.equal(myItem.getName(), "avocado");
 	});
 });

@@ -97,14 +97,14 @@ class Address {
     }
 
     isValid() {
-        return addressLine1 && 
-               addressLine2 &&
-               zipCode &&
-               city &&
-               state &&
-               country &&
-               firstName &&
-               lastName &&
+        return addressLine1 !== null && 
+               addressLine2 !== null &&
+               zipCode !== null &&
+               city !== null &&
+               state !== null &&
+               country !== null &&
+               firstName !== null &&
+               lastName !== null &&
                phoneNumber;
     }
 }

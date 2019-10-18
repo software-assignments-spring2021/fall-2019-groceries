@@ -2,7 +2,8 @@ class Order {
     constructor() {
         this.billingAddress = null;
         this.customer = null;
-        this.id = null;       
+        this.id = null;
+        this.paymentMethod = null;       
         this.shippingAddress = null;
     }
 
@@ -42,6 +43,18 @@ class Order {
         this.id = id;
     }
 
+    getPaymentMethod() {
+        return this.paymentMethod;
+    }
+
+    setPaymentMethod(paymentMethod) {
+        if (paymentMethod === null || !paymentMethod.isValid()) {
+            return;
+        }
+
+        this.paymentMethod = paymentMethod;
+    }
+
     getShippingAddress() {
         return this.shippingAddress;
     }
@@ -68,6 +81,7 @@ class Order {
         const hasValidAttributes = this.billingAddress.isValid() &&
                                    this.customer.getCart().size() > 0 &&
                                    this.customer.isValid() &&
+                                   this.paymentMethod.isValid() &&
                                    this.shippingAddress.isValid();
 
         return hasValidAttributes;

@@ -4,6 +4,7 @@ const {Cart} = require("../src/cart");
 const {Customer} = require("../src/customer");
 const {Item} = require("../src/item");
 const {Order} = require("../src/order");
+const {PaymentMethod} = require("../src/paymentMethod");
 
 describe('Order tests', function() {
     var order;
@@ -12,6 +13,7 @@ describe('Order tests', function() {
     var cart = new Cart();
     var customer = new Customer();
     var item = new Item();
+    var paymentMethod = new PaymentMethod();
 
     beforeEach(function() {
         validAddress.setAddressLine1("123 Main St.");
@@ -27,6 +29,11 @@ describe('Order tests', function() {
         customer.setCart(cart);
         customer.setId(123);
         customer.setName("James Bond"); 
+
+        paymentMethod.setExpiration(5, 3000);
+        paymentMethod.setNameOnCard("James Bond");
+        paymentMethod.setNumber(7);
+        paymentMethod.setSecurityCode(7);
         order = new Order();
     }); 
 
@@ -40,9 +47,14 @@ describe('Order tests', function() {
         assert.isNull(order.getBillingAddress());
     });
 
-    it('test customer modification', function() {
+    it('test valid customer modification', function() {
         order.setCustomer(customer);
         assert.equal(order.getCustomer(), customer);
+    });
+
+    it('test invalid customer does not modify', function() {
+        order.setCustomer(new Customer());
+        assert.isNull(order.getCustomer());
     });
 
     it('test order id modification', function() {
@@ -50,9 +62,24 @@ describe('Order tests', function() {
         assert.equal(order.getId(), "0xFFFF");
     });
 
-    it('test shipping validAddress modification', function() {
+    it('test valid shipping address modification', function() {
         order.setShippingAddress(validAddress);
         assert.equal(order.getShippingAddress(), validAddress);
+    });
+
+    it('test invalid shipping address does not modify', function() {
+        order.setShippingAddress(new Address());
+        assert.isNull(order.getShippingAddress());
+    });
+
+    it('test valid payment method modification', function() {
+        order.setPaymentMethod(paymentMethod);
+        assert.equal(order.getPaymentMethod(), paymentMethod);
+    });
+
+    it('test invalid payment method does not modify', function() {
+        order.setPaymentMethod(new PaymentMethod());
+        assert.isNull(order.getPaymentMethod());
     });
 
     it('test order with no attributes defined is invalid', function() {
@@ -71,6 +98,7 @@ describe('Order tests', function() {
         order.setShippingAddress(validAddress);
         order.setId(123);
         order.setCustomer(customer);
+        order.setPaymentMethod(paymentMethod);
         assert.isTrue(order.isValid());
     });
 });

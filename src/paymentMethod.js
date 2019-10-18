@@ -74,11 +74,11 @@ class PaymentMethod {
     }
 
     isValid() {
-        return expirationMonth &&
-               expirationYear &&
-               nameOnCard &&
-               number &&
-               securityCode;
+        return this.expirationMonth !== null &&
+               this.expirationYear !== null &&
+               this.nameOnCard !== null &&
+               this.number !== null &&
+               this.securityCode !== null;
     }
 }
 

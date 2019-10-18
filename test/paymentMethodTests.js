@@ -47,4 +47,16 @@ describe('PaymentMethod tests', function() {
 		paymentMethod.setSecurityCode(7);
 		assert.equal(paymentMethod.getSecurityCode(), 7);
 	});
+
+	it('test invalid when no attributes defined', function() {
+		assert.isFalse(paymentMethod.isValid());
+	});
+
+	it('test valid when all attributes defined', function() {
+		paymentMethod.setExpiration(5, 3000);
+		paymentMethod.setNameOnCard("James Bond");
+		paymentMethod.setNumber(7);
+		paymentMethod.setSecurityCode(7);
+		assert.isTrue(paymentMethod.isValid());
+	});
 });

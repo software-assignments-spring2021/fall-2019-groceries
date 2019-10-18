@@ -11,6 +11,10 @@ class Order {
     }
 
     setBillingAddress(billingAddress) {
+        if (billingAddress === null || !billingAddress.isValid()) {
+            return;
+        }
+
         this.billingAddress = billingAddress;
     }
 
@@ -23,6 +27,10 @@ class Order {
     }
 
     setCustomer(customer) {
+        if (customer === null || !customer.isValid()) {
+            return;
+        }
+
         this.customer = customer;
     }
 
@@ -39,6 +47,10 @@ class Order {
     }
 
     setShippingAddress(shippingAddress) {
+        if (shippingAddress === null || !shippingAddress.isValid()) {
+            return;
+        }
+
         this.shippingAddress = shippingAddress;
     }
 
@@ -54,7 +66,7 @@ class Order {
         }
 
         const hasValidAttributes = this.billingAddress.isValid() &&
-                                   this.cart.size() > 0 &&
+                                   this.customer.getCart().size() > 0 &&
                                    this.customer.isValid() &&
                                    this.shippingAddress.isValid();
 

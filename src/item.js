@@ -41,6 +41,13 @@ class Item {
     setName(name) {
     	this.name = name;
     }
+
+    isValid() {
+        return this.cost !== null &&
+               this.id !== null &&
+               this.link !== null &&
+               this.name !== null;
+    }
 }
 
 module.exports = {

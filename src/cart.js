@@ -41,6 +41,10 @@ class Cart {
     }
 
     addItem(item, quantity) {
+        if (!item.isValid()) {
+            return;
+        }
+
         const itemId = item.getId();
 
         if (this.items.has(itemId)) {

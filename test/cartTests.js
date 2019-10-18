@@ -8,20 +8,31 @@ describe('Cart tests', function() {
 
 	beforeEach(function() {
 	 	cart = new Cart();
-	 	avocado = new Item();	 	
-	 	avocado.setId("123");
+	 	avocado = new Item();	
+		avocado.setCost(5);
+		avocado.setId("1");
+		avocado.setLink("amazon.com/avocado");
+		avocado.setName("avocado");
 
 	 	apple = new Item();
-	 	apple.setId("456");
+		apple.setCost(5);
+		apple.setId("2");
+		apple.setLink("amazon.com/apple");
+		apple.setName("apple");
 	});	
 
 	it('test cart initially has no items', function() {
 		assert.equal(cart.size(), 0);
 	});
 
-	it('test add item to cart', function() {
+	it('test add valid item to cart', function() {
 		cart.addItem(avocado, 2);
 		assert.equal(cart.size(), 1);
+	});
+
+	it('test cannot add invalid item to cart', function() {
+		cart.addItem(new Item(), 2);
+		assert.equal(cart.size(), 0);
 	});
 
 	it('test get item quantity', function() {

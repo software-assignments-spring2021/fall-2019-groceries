@@ -28,6 +28,12 @@ class Customer {
     setName(name) {
         this.name = name;
     }
+
+    isValid() {
+        return this.cart !== null && 
+        this.id !== null && 
+        this.name !== null;
+    }
 }
 
 module.exports = {

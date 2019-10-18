@@ -24,4 +24,30 @@ describe('Customer tests', function() {
 		customer.setName("James Bond");
 		assert.equal(customer.getName(), "James Bond");
 	});
+
+	it('test customer is invalid when all attributes undefined', function() {
+		assert.isFalse(customer.isValid());
+	});
+
+	it('test customer is invalid when all attributes undefined', function() {
+		assert.isFalse(customer.isValid());
+	});
+
+	it('test customer is invalid when name undefined', function() {		
+		customer.setCart(cart);
+		customer.setId(123);
+		assert.isFalse(customer.isValid());
+	});
+
+	it('test customer is invalid when id undefined', function() {
+		customer.setCart(cart);
+		customer.setName("James Bond");		
+		assert.isFalse(customer.isValid());
+	});
+
+	it('test customer is invalid when cart undefined', function() {
+		customer.setId(123);
+		customer.setName("James Bond");		
+		assert.isFalse(customer.isValid());
+	});
 });

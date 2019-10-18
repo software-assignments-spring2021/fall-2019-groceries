@@ -45,8 +45,8 @@ describe('Address tests', function() {
 	});
 
 	it('test last name modification', function() {
-		address.setFirstName("Bond");
-		assert.equal(address.getFirstName(), "Bond");
+		address.setLastName("Bond");
+		assert.equal(address.getLastName(), "Bond");
 	});
 
 	it('test phone number modification', function() {
@@ -56,5 +56,18 @@ describe('Address tests', function() {
 
 	it('test address with no attributes defined is invalid', function() {
 		assert.isFalse(address.isValid());
+	});
+
+	it('test address with all attributes defined is valid', function() {
+		address.setAddressLine1("123 Main St.");
+		address.setAddressLine2("Apt. 5");
+		address.setZipCode("10028");
+		address.setCity("New York");
+		address.setState("New York");
+		address.setCountry("United States");
+		address.setFirstName("James");
+		address.setLastName("Bond");
+		address.setPhoneNumber("212-123-4567");
+		assert.isTrue(address.isValid());
 	});
 });

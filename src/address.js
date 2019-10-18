@@ -105,7 +105,7 @@ class Address {
                this.country !== null &&
                this.firstName !== null &&
                this.lastName !== null &&
-               this.phoneNumber;
+               this.phoneNumber !== null;
     }
 }
 

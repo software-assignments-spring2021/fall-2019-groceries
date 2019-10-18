@@ -29,10 +29,6 @@ describe('Customer tests', function() {
 		assert.isFalse(customer.isValid());
 	});
 
-	it('test customer is invalid when all attributes undefined', function() {
-		assert.isFalse(customer.isValid());
-	});
-
 	it('test customer is invalid when name undefined', function() {		
 		customer.setCart(cart);
 		customer.setId(123);
@@ -49,5 +45,12 @@ describe('Customer tests', function() {
 		customer.setId(123);
 		customer.setName("James Bond");		
 		assert.isFalse(customer.isValid());
+	});
+
+	it('test customer is valid when all attributes defined', function() {
+		customer.setCart(cart);
+		customer.setId(123);
+		customer.setName("James Bond");	
+		assert.isTrue(customer.isValid());
 	});
 });

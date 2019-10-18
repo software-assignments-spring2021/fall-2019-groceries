@@ -53,4 +53,8 @@ describe('Address tests', function() {
 		address.setPhoneNumber("212-123-4567");
 		assert.equal(address.getPhoneNumber(), "212-123-4567");
 	});
+
+	it('test address with no attributes defined is invalid', function() {
+		assert.isFalse(address.isValid());
+	});
 });

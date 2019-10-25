@@ -1,17 +1,24 @@
-var expect = require('chai').expect;
-var Alias = require('../models/cart.model.js');
+var mocha = require('mocha');
+var Alias = require('../backend/models/alias.model.js');
+const assert = require('assert');
 
-describe('cart tests', function() {
-    it('should be invalid if username is blank', function(done) {
-        var a = new Alias();
-
-        a.validate(function(err) {
-            expect(err.errors.username).to.exist;
-            done();
+describe('alias tests', function() {
+    var alias;
+    beforeEach(function() {
+        alias = new Alias({
+            username: "testusername",
+            alias: "apple",
+            link: "amazon.com"
         });
     });
-
-    
-    
+    it('should be invalid if username is blank', function() {
+        assert.notEqual(alias.username, "");
+    });
+    it('should be invalid if alias is blank', function() {
+        assert.notEqual(alias.alias, "");
+    });
+    it('should be invalid if link is blank', function() {
+        assert.notEqual(alias.link, "");
+    });
 });
 

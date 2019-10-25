@@ -1,17 +1,37 @@
-var expect = require('chai').expect;
-var User = require('../models/user.model.js');
+var mocha = require('mocha');
+var User = require('../backend/models/user.model.js');
+const assert = require('assert');
 
 describe('user tests', function() {
-    it('should be invalid if blank', function(done) {
-        var u = new User();
+    var user;
+    beforeEach(function() {
+        user = new User({
+            username: "testusername",
+            password: "testpassword",
+            address: "123 Main St. New York, NY, 10003",
+            full_name: "FirstName LastName",
+            phone_number: 123456789
 
-        u.validate(function(err) {
-            expect(err.errors.username).to.exist;
-            done();
         });
     });
-
-    
+    it('should be invalid if username is blank', function() {
+        assert.notEqual(user.username, "");
+    });
+    it('should be invalid if password is blank', function() {
+        assert.notEqual(user.password, "");
+    });
+    it('should be invalid if full_name is blank', function() {
+        assert.notEqual(user.full_name, "");
+    });
+    it('should be invalid if address is blank', function() {
+        assert.notEqual(user.address, "");
+    });
+    it('should be invalid if phone_number is blank', function() {
+        assert.notEqual(user.phone_number, "");
+    });
+    it('username must be longer than 3 characters', function() {
+        assert.ok(user.username.length > 3);
+    });
     
 });
 

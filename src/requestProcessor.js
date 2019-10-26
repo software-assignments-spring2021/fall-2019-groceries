@@ -1,4 +1,4 @@
-class EventProcessor {
+class RequestProcessor {
 	constructor() {
 		this.bot = null;
 		this.database = null;
@@ -19,5 +19,5 @@ class EventProcessor {
 }
 
 module.exports = {
-	EventProcessor
+	RequestProcessor
 };

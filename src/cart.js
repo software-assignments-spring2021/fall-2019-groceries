@@ -76,6 +76,11 @@ class Cart {
     size() {
         return this.items.length;
     }
+
+    toString() {
+        // TODO
+        return "";
+    }
 }
 
 module.exports = {

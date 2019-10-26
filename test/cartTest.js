@@ -2,7 +2,7 @@ var mocha = require('mocha');
 var Cart = require('../backend/models/cart.model.js');
 const assert = require('assert');
 
-describe('cart tests', function() {
+describe('Cart (Mongo) Tests', function() {
     var cart;
     beforeEach(function() {
         cart = new Cart({

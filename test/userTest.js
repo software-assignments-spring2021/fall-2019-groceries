@@ -2,7 +2,7 @@ var mocha = require('mocha');
 var User = require('../backend/models/user.model.js');
 const assert = require('assert');
 
-describe('user tests', function() {
+describe('User (Mongo) Tests', function() {
     var user;
     beforeEach(function() {
         user = new User({

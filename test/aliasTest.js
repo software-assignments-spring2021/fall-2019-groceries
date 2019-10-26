@@ -2,7 +2,7 @@ var mocha = require('mocha');
 var Alias = require('../backend/models/alias.model.js');
 const assert = require('assert');
 
-describe('alias tests', function() {
+describe('Alias (Mongo) Tests', function() {
     var alias;
     beforeEach(function() {
         alias = new Alias({

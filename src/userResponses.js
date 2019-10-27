@@ -22,7 +22,9 @@ class UserResponse {
 }
 
 class DisplayUserCartResponse extends UserResponse {
-
+	constructor() {
+		super();
+	}
 }
 
 module.exports = {

@@ -22,7 +22,9 @@ class UserRequest {
 }
 
 class DisplayUserCartRequest extends UserRequest {
-
+	constructor() {
+		super();
+	}
 }
 
 module.exports = {

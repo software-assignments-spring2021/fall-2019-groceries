@@ -45,7 +45,7 @@ class Search
             //console.log(searchResults);
             //createString(searchResults);
             setSearchItem(searchResults);
-            //console.dir(jsonData);
+           
         })
         .catch(function fail(error) {
         console.log("error retreiving results");

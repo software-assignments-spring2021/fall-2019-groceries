@@ -26,7 +26,7 @@ class RequestProcessor {
         }
 
         // get the user's cart from Mongo without blocking
-        var userCart = await database.getUserCart(user);
+        var userCart = await this.database.getUserCart(user);
 
         var userResponse = DisplayUserCartResponse();
         userResponse.setUser(user);

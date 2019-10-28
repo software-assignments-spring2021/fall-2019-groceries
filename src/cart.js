@@ -78,8 +78,13 @@ class Cart {
     }
 
     toString() {
-        // TODO
-        return "";
+        var str = "";
+
+        for (let cartItem of this.items.values()) {
+            str += item.getName() + ": " + item.getQuantity() + "\n";
+        }
+
+        return str;
     }
 }
 

@@ -51,7 +51,6 @@ describe('RequestProcessor tests', function() {
 
 		var dbAPI = { getUserCart: function (user) {} };
 		database = sinon.mock(dbAPI);
-		console.log(database);
 		requestProcessor.setDatabase(database);
 
 		request.setUser(user);

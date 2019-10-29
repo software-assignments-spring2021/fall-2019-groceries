@@ -21,6 +21,12 @@ class UserResponse {
 	}
 }
 
+class DisplayUserAliasesResponse extends UserResponse {
+	constructor() {
+		super();
+	}
+}
+
 class DisplayUserCartResponse extends UserResponse {
 	constructor() {
 		super();
@@ -28,5 +34,6 @@ class DisplayUserCartResponse extends UserResponse {
 }
 
 module.exports = {
+	DisplayUserAliasesResponse,
 	DisplayUserCartResponse
 }

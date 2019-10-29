@@ -1,4 +1,4 @@
-const {DisplayUserCartResponse} = require("./userResponses");
+const {AddCartItemResponse, DisplayUserAliasesResponse, DisplayUserCartResponse} = require("./userResponses");
 
 class RequestProcessor {
 	constructor() {
@@ -26,14 +26,53 @@ class RequestProcessor {
         }
 
         // get the user's cart from Mongo without blocking
-        var userCart = await this.database.getUserCart(user);
+        const userCart = await this.database.getUserCart(user);
 
-        var userResponse = DisplayUserCartResponse();
+        var responseText;
+        if (userCart === null) {
+        	responseText = "User cart is empty";
+        }
+        else {
+        	responseText = userCart.toString();
+        }
+
+        // populate response to send to bot
+        var userResponse = new DisplayUserCartResponse();
         userResponse.setUser(user);
-        userResponse.setResponseText(userCart.toString());
+        userResponse.setResponseText(responseText);
                 
         // send response to bot without blocking
-        var success = await bot.onDisplayUserCartResponse(userResponse);
+        const success = await bot.onDisplayUserCartResponse(userResponse);
+    }
+
+    async onDisplayUserAliasesRequest(request) {
+    	const user = request.getUser();
+    	if (user === null) {
+    		return;
+    	}
+
+    	// populate response to send to bot
+    	var userResponse = new DisplayUserAliasesResponse();
+    	userResponse.setUser(user);
+
+    	// get the user's aliases from database without blocking
+    	const userAliases = await this.database.getUserAliases(user);
+    	var responseText = "";
+
+    	if (userAliases === null) {
+    		responseText += "User does not have any aliases defined";
+    	}
+    	else {
+    		for (let userAlias of userAliases) {
+    			const aliasedItem = alias.getItem();
+    			responseText += userAlias.getName() + ": " + aliasedItem.getName();
+    			responseText += "\n";
+    		}
+    	}    	
+
+    	// send response to bot without blocking
+    	userResponse.setResponseText(responseText);    	
+    	const success = await bot.onDisplayUserAliasesResponse(userResponse);
     }
 }
 

@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-//const {Search} = require("../productSearch.js");
+
 
 const search = require("../productSearch.js");
 
@@ -14,7 +14,7 @@ describe('Product search tests', function() {
         var count = Object.keys(result.responseText).length;
        
         assert.isFalse(result > 114);
-        //assert.equal(obj, "error");
+       
 
     });
     
@@ -27,7 +27,7 @@ describe('Product search tests', function() {
         var count = Object.keys(result.responseText).length;
       
         assert.isFalse(result > 114);
-        //assert.equal(obj, "error");
+        
 
     });
     
@@ -38,7 +38,7 @@ describe('Product search tests', function() {
 
        
         assert.isFalse(result == "error");
-        //assert.equal(obj, "error");
+        
 
 	});
 
@@ -60,9 +60,9 @@ describe('Product search tests', function() {
         
         var result = search.searchItem("08-4754986794567340596867089").status;
 
-        //console.log(result);
+        
         assert.isTrue(result == 200);
-        //assert.equal(obj, "error");
+       
         
     });
     
@@ -72,7 +72,7 @@ describe('Product search tests', function() {
         
         var result = search.searchItem("banana");
 
-        //console.log(result);
+        
         assert.isObject(result);
       
     });
@@ -82,7 +82,7 @@ describe('Product search tests', function() {
         
         var result = search.searchItem("macbook+pro");
 
-        //console.log(result);
+        
         assert.isObject(result);
       
     });

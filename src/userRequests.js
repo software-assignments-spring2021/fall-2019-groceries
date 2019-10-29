@@ -21,6 +21,12 @@ class UserRequest {
 	}
 }
 
+class DisplayUserAliasesRequest extends UserRequest {
+	constructor() {
+		super();
+	}
+}
+
 class DisplayUserCartRequest extends UserRequest {
 	constructor() {
 		super();
@@ -28,5 +34,6 @@ class DisplayUserCartRequest extends UserRequest {
 }
 
 module.exports = {
+	DisplayUserAliasesRequest,
     DisplayUserCartRequest
 };

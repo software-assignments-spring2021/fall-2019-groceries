@@ -76,6 +76,17 @@ class Cart {
     size() {
         return this.items.length;
     }
+
+    toString() {
+        var str = "";
+
+        for (let cartItem of this.items.values()) {
+            str += "Item: " + cartItem.getItem().getName();
+            str += " Quantity: " + cartItem.getQuantity() + "\n";
+        }
+
+        return str;
+    }
 }
 
 module.exports = {

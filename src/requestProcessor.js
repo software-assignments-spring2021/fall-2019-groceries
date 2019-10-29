@@ -57,12 +57,13 @@ class RequestProcessor {
 
     	// get the user's aliases from database without blocking
     	const userAliases = await this.database.getUserAliases(user);
-    	var responseText = "";
+    	var responseText;
 
     	if (userAliases === null) {
-    		responseText += "User does not have any aliases defined";
+    		responseText = "User does not have any aliases defined";
     	}
     	else {
+    		responseText = "";
     		for (let userAlias of userAliases) {
     			const aliasedItem = alias.getItem();
     			responseText += userAlias.getName() + ": " + aliasedItem.getName();

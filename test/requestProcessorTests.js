@@ -25,25 +25,35 @@ describe('RequestProcessor tests', function() {
 	var requestProcessor;
 
 	beforeEach(function() {
-		bot = sinon.fake();
-		cart = new Cart();		
-
-		var databaseAPI = {getUserCart: function(user) {return cart} };
-		database = sinon.mock(databaseAPI);
+		cart = new Cart();
 		user = sinon.fake();
 
 		request = new DisplayUserCartRequest();
 		requestProcessor = new RequestProcessor();
-		requestProcessor.setBot(bot);
-		requestProcessor.setDatabase(database);
+		
 	});
 
 	it('Test onDisplayUserCartRequest does not respond to bot', function() {
+		bot = sinon.fake();
+		requestProcessor.setBot(bot);
+
+		var dbAPI = { getUserCart: function (user) {} };
+		database = sinon.mock(dbAPI);
+		requestProcessor.setDatabase(database);
+		
 		requestProcessor.onDisplayUserCartRequest(request);
 		assert(bot.notCalled);
 	});
 
 	it('Test onDisplayUserCartRequest returns cart on well-formed request', function() {
+		bot = sinon.fake();
+		requestProcessor.setBot(bot);
+
+		var dbAPI = { getUserCart: function (user) {} };
+		database = sinon.mock(dbAPI);
+		console.log(database);
+		requestProcessor.setDatabase(database);
+
 		request.setUser(user);
 		requestProcessor.onDisplayUserCartRequest(request);
 		assert(bot.calledOnce);

@@ -9,5 +9,5 @@ branches:
     - master
  
 script:
-  npm install
+  npm install mocha
   npm run test

@@ -3,3 +3,7 @@ language: node_js
 branches:
   only:
     - master
+
+script:
+  npm install
+  npm run test

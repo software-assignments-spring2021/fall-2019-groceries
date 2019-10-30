@@ -9,5 +9,5 @@ branches:
     - master
  
 script:
-  npm install --save-dev nyc mocha
-  npm run test
+ - npm install --save-dev nyc mocha
+ - npm run test

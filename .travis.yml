@@ -9,5 +9,9 @@ branches:
     - master
  
 script:
- - npm install --save-dev nyc mocha
+ - npm install --save-dev nyc mocha sinon
+ - npm run test
+ - cd bot
+ - npm run test
+ - cd ../productSearch
  - npm run test

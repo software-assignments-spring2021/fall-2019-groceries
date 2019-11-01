@@ -1,0 +1,14 @@
+language: node_js
+
+node_js:
+  - "node"
+
+branches:
+  only:
+    - master
+ 
+script:
+ - npm install --save-dev nyc mocha sinon mongoose
+ - npm run test
+ - cd bot; npm install --save-dev nyc mocha; npm run test
+ - cd ../productSearch; npm install --save-dev nyc mocha xmlhttprequest; npm run test

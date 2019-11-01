@@ -2,7 +2,8 @@ class Alias {
     constructor() {
         this.cart = null;
         this.customer = null;
-        this.id = null;       
+        this.id = null;     
+        this.item = null;  
         this.name = null;        
     }
 
@@ -28,6 +29,14 @@ class Alias {
 
     setId(id) {
         this.id = id;
+    }
+
+    getItem() {
+        return this.item;
+    }
+
+    setItem(item) {
+        this.item = item;
     }
 
     getName() {

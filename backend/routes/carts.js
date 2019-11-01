@@ -23,24 +23,19 @@ router.route('/add').post((req, res) => {
     .catch(err => res.status(400).json('Error: '+err));
 });
 
-router.route('/:id').get((req, res) => {
-    Cart.findByID(req.params.id)
+
+router.route('/Cart/:username').get((req, res) => {
+    Cart.find({username: req.params.username})
     .then(cart => res.json(cart))
     .catch(err => res.status(400).json('Error ' + err));
 });
 
-router.route('/:id').delete((req, res) => {
-    Cart.findByIDandDelete(req.params.id)
-    .then(cart => res.json('Cart deleted.'))
-    .catch(err => res.status(400).json('Error ' + err));
-});
-
-router.route('/update/:id').post((req, res) => {
-    Cart.findByID(req.params.id)
+router.route('/update/:username').post((req, res) => {
+    Cart.find({username: req.params.username})
     .then(cart => {
         cart.username = req.body.username;
         cart.num_items = Number(req.body.num_items);
-        cart.alias_list = Array(req.body.alias_list);
+        cart.alias_list = req.body.alias_list;
 
         cart.save()
         .then(() => res.json('Cart updated!'))

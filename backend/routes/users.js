@@ -13,9 +13,10 @@ router.route('/add').post((req, res) => {
     const password = req.body.password;
     const full_name = req.body.full_name;
     const address = req.body.address;
-    const phone_number = req.body.phone_number;
-    
+    const phone_number = req.body.phone_number;    
+  
     const newUser = new User({username, password, full_name, address, phone_number});
+
     newUser.save()
         .then(() => {
         
@@ -31,7 +32,6 @@ router.route('/add').post((req, res) => {
         return newCart.save()
 
         })
-
         .then(() => res.json('Cart added!'))
         .catch(err => res.status(400).json('Error: '+err));
 });

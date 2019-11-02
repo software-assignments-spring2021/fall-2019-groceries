@@ -30,12 +30,21 @@ router.route('/:username/showCart').get((req, res) => {
     .catch(err => res.status(400).json('Error ' + err));
 });
 
-router.route('/:username/updateList').get((req, res) => {
+router.route('/:username/addItem').post((req, res) => {
+    
     Cart.find({username: req.body.username})
-    .then(cart => 
-        res.json(cart.keys)
+    .updateOne({$push: {alias_list: req.body.item}})
+    .updateOne({$set: {num_items: Cart.alias_list.length()}})
+    //.updateOne({$push: {num_items: req.length}})
+    .then(cart => {
+        //Cart.updateOne({$push: {alias_list: req.body.item}})
+        
+        
+        //return cart.save();
+        res.json(cart);
         //cart.save()
-    )
+    })
+    
     .catch(err => res.status(400).json('Error '+ err));
     
     //cart.alias_list.push(req.body.alias_list);

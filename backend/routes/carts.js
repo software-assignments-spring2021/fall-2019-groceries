@@ -24,7 +24,7 @@ router.route('/add').post((req, res) => {
 });
 
 
-router.route('/:username/showCart').get((req, res) => {
+router.route('/:username/showcart').get((req, res) => {
     Cart.find({username: req.body.username})
     .then(cart => res.json(cart))
     .catch(err => res.status(400).json('Error ' + err));
@@ -33,36 +33,20 @@ router.route('/:username/showCart').get((req, res) => {
 router.route('/:username/addItem').post((req, res) => {
     
     Cart.find({username: req.body.username})
-    .updateOne({$push: {alias_list: req.body.item}})
-    .updateOne({$set: {num_items: Cart.alias_list.length()}})
-    //.updateOne({$push: {num_items: req.length}})
+    
+    .updateOne({$push: {alias_list: req.body.item}}) // pushes item to list
+    .updateOne({$inc: {num_items: 1}}) // increase num_items by 1, might need to be changed
+    
     .then(cart => {
-        //Cart.updateOne({$push: {alias_list: req.body.item}})
-        
-        
-        //return cart.save();
+        //res.json(cart.alias_list);
         res.json(cart);
-        //cart.save()
+        
     })
     
     .catch(err => res.status(400).json('Error '+ err));
     
-    //cart.alias_list.push(req.body.alias_list);
-    
-    //cart.alias_list.push(req.body.add_item)
-    /*
-    .then({
-
-        cart.alias_list.append(req.body.alias_list);
-
-        cart.save()
-        .then(() => res.json('Cart updated!'))
-        .catch(err => res.status(400).json('Error ' + err));
-    })
-    */
-    //.then(() => res.json('Cart updated!'))
-    //.catch(err => res.status(400).json('Error '+ err));
 });
+
 
 
 module.exports = router;

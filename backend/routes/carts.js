@@ -9,40 +9,44 @@ router.route('/').get((req, res) => {
 
 router.route('/add').post((req, res) => {
     const username = req.body.username;
-    const num_items = Number(req.body.num_items);
-    const alias_list = req.body.alias_list;
+    var alias_list = req.body.alias_list;
+    var num_items = alias_list.length;
 
-    const newCart = new Cart({
+    var newCart = new Cart({
         username,
         num_items,
         alias_list
     });
 
-    newCart.save()
+    return newCart.save()
     .then(() => res.json('Cart added!'))
     .catch(err => res.status(400).json('Error: '+err));
 });
 
 
-router.route('/Cart/:username').get((req, res) => {
-    Cart.find({username: req.params.username})
+router.route('/:username/showcart').get((req, res) => {
+    Cart.find({username: req.body.username})
     .then(cart => res.json(cart))
     .catch(err => res.status(400).json('Error ' + err));
 });
 
-router.route('/update/:username').post((req, res) => {
-    Cart.find({username: req.params.username})
+router.route('/:username/addItem').post((req, res) => {
+    
+    Cart.find({username: req.body.username})
+    
+    .updateOne({$push: {alias_list: req.body.item}}) // pushes item to list
+    .updateOne({$inc: {num_items: 1}}) // increase num_items by 1, might need to be changed
+    
     .then(cart => {
-        cart.username = req.body.username;
-        cart.num_items = Number(req.body.num_items);
-        cart.alias_list = req.body.alias_list;
-
-        cart.save()
-        .then(() => res.json('Cart updated!'))
-        .catch(err => res.status(400).json('Error ' + err));
+        //res.json(cart.alias_list);
+        res.json(cart);
+        
     })
+    
     .catch(err => res.status(400).json('Error '+ err));
+    
 });
+
 
 
 module.exports = router;

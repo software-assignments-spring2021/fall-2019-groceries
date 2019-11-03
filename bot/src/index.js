@@ -1,17 +1,32 @@
-//const Telegraf = require('telegraf')
-var token = "token"
-// const bot = new Telegraf(token)
-// bot.start((ctx) => ctx.reply('Welcome! This is a test dojo for Groceries Bot, type /help'))
+const TelegramBot = require('node-telegram-bot-api');
+//process.env["NTBA_FIX_319"] = 1
+const token = "708748902:AAH0EQMuaVl_ZS93i-fZDf4RMNieG869Gf8"
+const bot = new TelegramBot(token, {polling: true});
 
-// bot.help((ctx) => ctx.reply('Well woo hoo I did not expect you would actually type this \n I guess I have to work now \n type /commandlist'))
-// //var b  = parseMiddleWare.parse_entry(ctx)
-// let coms = ['commandlist', 'mockcart', 'displaycart']
-// bot.command(coms[0], ctx => ctx.reply(build_list(coms,0)))
-//bot.command(coms[1], ctx => ctx.reply(build_list)
-//console.log(bot.message.message_id)
-//bot.launch()
+bot.onText(/\/start/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
+Type /help for more info`;
+  bot.sendMessage(fromId, response);
+});
 
+bot.onText(/\/help/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
+List of commands (use drop down menu as well): \n
+/help - I'll hold your hand bb and help you \n
+/cart - I'll create the virtual cart for you (food comes in bits) \n
+/add <number> <item> - I'll add an item in your cart \n
+/search <item> - I'll help you to find an item \n
+`;
+  bot.sendMessage(fromId, response);
+});
 
+bot.onText(/\/cart/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Now I'm going to create your virtual cart`;
+  bot.sendMessage(fromId, response);
+});
 
 //build list 0 for coms 1 for groceries
 //const build_list => (listo, decider)

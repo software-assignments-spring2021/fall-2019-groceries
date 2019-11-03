@@ -1,16 +1,24 @@
 const mongoose = require('mongoose');
 
-
 var Schema = mongoose.Schema;
 
-var cartSchema = new Schema ({
+const cartSchema = new Schema ({
     username: {type: String, required: true},
-    item_list: {type: [itemSchema], required: true}
+    items: {type: [cartItemSchema]},
+    fullItemsInfo: {type: [fullItemSchema]}
 });
 
-var itemSchema = new Schema ({
+var cartItemSchema = new Schema ({
+    name: {type: String, required: true},
     quantity: {type: Number, required: true},
-    item: {type: String, required: true}
+
+});
+
+var fullItemSchema = new Schema ({
+    cost: {type: Number},
+    id: {type: String},
+    link: {type: String},
+    name: {type: String}
 });
 
 const Cart = mongoose.model('Cart', cartSchema);

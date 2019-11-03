@@ -22,11 +22,13 @@ connection.once('open', () => {
 
 const cartsRouter = require('./routes/carts');
 const usersRouter = require('./routes/users');
-const aliasRouter = require('./routes/alias');
+const aliasRouter = require('./routes/aliases');
+const itemsRouter = require('./routes/items');
 
 app.use('/carts', cartsRouter);
 app.use('/users', usersRouter);
-app.use('/alias', aliasRouter);
+app.use('/aliases', aliasRouter);
+app.use('/items', itemsRouter);
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });

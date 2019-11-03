@@ -22,14 +22,14 @@ router.route('/add').post((req, res) => {
         .then(() => {
         
         const newCart = new Cart({username});
-        res.json(newCart)
+        res.json()
         return newCart.save()
         })
         .catch(err => res.status(400).json('Error: '+err));
 });
 
 router.route('/:username').get((req, res) => {
-    User.find({username: req.body.username})
+    User.find({username: req.params.username})
     .then(user => res.json(user))
     .catch(err => res.status(400).json('Error '+ err));
 })

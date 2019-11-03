@@ -5,62 +5,68 @@ class DatabaseAdapter {
 		this.baseEndpoint = 'http://localhost:4000/';
 	}
 
+	async sendGetRequest(endpoint) {
+		return new Promise((resolve, reject) => {
+			request(endpoint, function(err, res, body) {
+	    		return resolve(body);
+			});	
+		});	
+	}
+
+	async sendPostRequest(requestBody, endpoint) {
+		return new Promise((resolve, reject) => {
+			request.post({url: endpoint, form: requestBody}, 
+				function(err, httpResponse, body) {
+					return resolve(body);
+				}
+			);
+		});	
+	}
+
 	async getUserCart(user) {
-		const endpoint = baseEndpoint + 'carts/' + user.getId();
+		const endpoint = this.baseEndpoint + 'carts/Cart/' + user.getId();
+		
 		// get user's cart without blocking
-		var userCartJSON = await sendGetRequest(endpoint);
+		var userCartJSON = await this.sendGetRequest(endpoint);
 		return userCartJSON;
 	}
 
 	async setUserCart(user, cart) {
-		var cartItems = {'items', []};
-		const endpoint = baseEndpoint + 'carts/update/' + user.getId();
+		var cartItems = {'items': []};
+		const endpoint = this.baseEndpoint + 'carts/update/' + user.getId();
 
 		for (let cartItem of cart.getItems()) {
 			const item = cartItem.getItem();
-			const itemEntry = {item.getName() : cartItem.getQuantity()};
+			const itemName = item.getName();
+			const itemEntry = {itemName : cartItem.getQuantity()};
 			cartItems['items'].push(itemEntry);
 		}
 
-		var success = await sendPostRequest(cartItems, endpoint);
+		var success = await this.sendPostRequest(cartItems, endpoint);
 	}
 
 	async getUserAliases(user) {
-		const endpoint = baseEndpoint + 'aliases/' + user.getId();
-		// get user's cart without blocking
-		var userCartJSON = await sendGetRequest(endpoint);
+		const endpoint = this.baseEndpoint + 'aliases/' + user.getId();
+		
+		// get user aliases without blocking
+		var userCartJSON = await this.sendGetRequest(endpoint);
 		return userCartJSON;
 	}
 
 	async setUserAliases(user, aliases) {
-		var userAliases = {'aliases:', []};
-		const endpoint = baseEndpoint + 'aliases/update/' + user.getId();
+		var userAliases = {'aliases': []};
+		const endpoint = this.baseEndpoint + 'aliases/update/' + user.getId();
 
 		for (let alias of aliases) {
-			const aliasEntry = {alias.getName() : alias.getLink()};
+			const aliasName = alias.getName();
+			const aliasEntry = {aliasName : alias.getLink()};
 			userAliases['aliases'].push(aliasEntry);
 		}
 
-		var success = await sendPostRequest(userAliases, endpoint);
-	}
-
-	async sendGetRequest(endpoint) {
-		var responseBody;
-
-		request(endpoint, function(err, res, body) {
-    		responseBody = body;
-		});
-
-		return responseBody;
-	}
-
-	async sendPostRequest(requestBody, endpoint) {
-		var responseBody;
-
-		request.post({url: endpoint, form: requestBody}, function(err, httpResponse, body) {
-			responseBody = body;
-		});
-
-		return responseBody;
+		var success = await this.sendPostRequest(userAliases, endpoint);
 	}
 }
+
+module.exports = {
+	DatabaseAdapter
+};

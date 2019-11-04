@@ -24,7 +24,7 @@ class DatabaseAdapter {
 	}
 
 	async getUserCart(user) {
-		const endpoint = this.baseEndpoint + 'carts/Cart/' + user.getId();
+		const endpoint = this.baseEndpoint + 'carts/' + user.getId();
 		
 		// get user's cart without blocking
 		var userCartJSON = await this.sendGetRequest(endpoint);

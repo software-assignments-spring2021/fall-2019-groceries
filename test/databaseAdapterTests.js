@@ -9,16 +9,16 @@ describe('Database Adapter tests', function() {
 	beforeEach(function() {
 		databaseAdapter = new DatabaseAdapter();
 		customer = new Customer();
-		customer.setId("test_aaron");
+		customer.setId("finaltesting");
 	});
 
 	it('test getUserCart', async function() {
 		var cart = await databaseAdapter.getUserCart(customer);
-		console.log(cart);
+		assert.isOk(cart);
 	});
 
 	it('test getUserAliases', async function() {
 		var aliases = await databaseAdapter.getUserAliases(customer);
-		console.log(aliases);
+		assert.isOk(aliases);
 	});
 });

@@ -58,7 +58,7 @@ describe('Product search tests', function() {
     //this returns true if the server, amazon, is up and running
     it('Checks server, amazon, is up and running', function() {
         
-        var result = search.searchItem("08-4754986794567340596867089").status;
+        var result = search.searchItem("08-47549867945867089").status;
 
         
         assert.isTrue(result == 200);

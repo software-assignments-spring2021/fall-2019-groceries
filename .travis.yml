@@ -8,7 +8,10 @@ branches:
     - master
  
 script:
- - npm install --save-dev nyc mocha sinon mongoose
+ - npm install --save-dev nyc mocha nodemon sinon mongoose request
+ - cd backend; npm install --save-dev nodemon
+ - nodemon server &
+ - cd ..
  - npm run test
- - cd bot; npm install --save-dev nyc mocha; npm run test
+ - cd bot; npm install --save-dev nyc mocha node-telegram-bot-api; npm run test
  - cd ../productSearch; npm install --save-dev nyc mocha xmlhttprequest; npm run test

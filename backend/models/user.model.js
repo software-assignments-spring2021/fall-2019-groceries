@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const aliasSchema = new Schema ({
+    name: {type: String, required: true},
+    link: {type: String, required: true}
+});
+
 const userSchema = new Schema({
     username: {
         type: String,
@@ -14,10 +19,7 @@ const userSchema = new Schema({
     full_name: {type: String, required: true},
     address: {type: String, required: true},
     phone_number: {type: Number, required: true},
-
-
-}, {
-    timestamps: true,
+    aliases: {type: [aliasSchema], required: true}
 });
 
 const User = mongoose.model('User', userSchema);

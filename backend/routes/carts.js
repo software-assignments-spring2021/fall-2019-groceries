@@ -1,48 +1,33 @@
 const router = require('express').Router();
 let Cart = require('../models/cart.model');
 
-router.route('/').get((req, res) => {
-    Cart.find()
-        .then(carts => res.json(carts))
-        .catch(err => res.status(400).json('Error: '+err));
-});
-
 router.route('/add').post((req, res) => {
     const username = req.body.username;
-    const num_items = Number(req.body.num_items);
-    const alias_list = req.body.alias_list;
+    var items = req.body.items;
+    var full_items = req.body.full_items;
 
-    const newCart = new Cart({
+    var newCart = new Cart({
         username,
-        num_items,
-        alias_list
+        items,
+        full_items
     });
-
-    newCart.save()
-    .then(() => res.json('Cart added!'))
+    return newCart.save()
+    
     .catch(err => res.status(400).json('Error: '+err));
 });
 
-
-router.route('/Cart/:username').get((req, res) => {
+router.route('/:username').get((req, res) => {
     Cart.find({username: req.params.username})
-    .then(cart => res.json(cart))
+    .then(cart => res.json(cart[0].items))
     .catch(err => res.status(400).json('Error ' + err));
 });
 
 router.route('/update/:username').post((req, res) => {
     Cart.find({username: req.params.username})
-    .then(cart => {
-        cart.username = req.body.username;
-        cart.num_items = Number(req.body.num_items);
-        cart.alias_list = req.body.alias_list;
-
-        cart.save()
-        .then(() => res.json('Cart updated!'))
-        .catch(err => res.status(400).json('Error ' + err));
-    })
+    .updateOne({$set: {items: req.body.items}}) // pushes items to items list
+    .then(cart => res.json())
     .catch(err => res.status(400).json('Error '+ err));
+    
 });
-
 
 module.exports = router;

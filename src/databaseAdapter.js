@@ -5,22 +5,31 @@ class DatabaseAdapter {
 		this.baseEndpoint = 'http://localhost:4000/';
 	}
 
-	async sendGetRequest(endpoint) {
-		return new Promise((resolve, reject) => {
-			request(endpoint, function(err, res, body) {
-	    		return resolve(body);
-			});	
-		});	
+	async addUser(user) {
+		const endpoint = this.baseEndpoint + 'users/add/';
+		var userData = {};
+
+		// populate user data
+		userData["username"] = user.getUsername();
+		userData["password"] = user.getPassword();
+
+		const userAddress = user.getAddress();
+		userData["full_name"] = user.getName();
+		userData["address"] = userAddress.getAddressLine1();
+		userData["phone_number"] = userAddress.getPhoneNumber();
+
+		// send GET without blocking
+		var response = await this.sendPostRequest(userData, endpoint);
+		return response;
 	}
 
-	async sendPostRequest(requestBody, endpoint) {
-		return new Promise((resolve, reject) => {
-			request.post({url: endpoint, form: requestBody}, 
-				function(err, httpResponse, body) {
-					return resolve(body);
-				}
-			);
-		});	
+	async getUserData(user) {
+		const endpoint = this.baseEndpoint + 'users/' + user.getId();
+
+		// get user data without blocking
+		var userData = await this.sendGetRequest(endpoint);
+		userData = JSON.parse("[" + userData + "]")[0][0];
+		return userData;
 	}
 
 	async getUserCart(user) {
@@ -64,6 +73,25 @@ class DatabaseAdapter {
 		}
 
 		var success = await this.sendPostRequest(userAliases, endpoint);
+	}
+
+
+	async sendGetRequest(endpoint) {
+		return new Promise((resolve, reject) => {
+			request(endpoint, function(err, res, body) {
+	    		return resolve(body);
+			});	
+		});	
+	}
+
+	async sendPostRequest(requestBody, endpoint) {
+		return new Promise((resolve, reject) => {
+			request.post({url: endpoint, json: requestBody}, 
+				function(err, httpResponse, body) {
+					return resolve(body);
+				}
+			);
+		});	
 	}
 }
 

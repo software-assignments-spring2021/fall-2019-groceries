@@ -1,8 +1,19 @@
 class Customer {
     constructor() {  
+        this.address = null;
         this.cart = null;      
     	this.id = null;
-        this.name = null;        
+        this.name = null;       
+        this.username = null;
+        this.password = null; 
+    }
+
+    getAddress() {
+        return this.address;
+    }
+
+    setAddress(address) {
+        this.address = address;
     }
 
     getCart() {
@@ -27,6 +38,22 @@ class Customer {
 
     setName(name) {
         this.name = name;
+    }
+
+    getPassword() {
+        return this.password;
+    }
+
+    setPassword(password) {
+        this.password = password;
+    }
+
+    getUsername() {
+        return this.username;
+    }
+
+    setUsername(username) {
+        this.username = username;
     }
 
     isValid() {

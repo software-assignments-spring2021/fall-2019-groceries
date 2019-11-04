@@ -25,7 +25,7 @@ describe('Database Adapter tests', function() {
 
 		pear = new Item();
 		pear.setLink("amazon.com/pear");
-		pear.setCost(5);
+		pear.setCost(500);
 		pear.setName("pear");
 		pear.setId("456");
 	});
@@ -101,5 +101,24 @@ describe('Database Adapter tests', function() {
 		
 		assert.equal(propagatedAliases[0]['name'], 'apple');
 		assert.equal(propagatedAliases[1]['name'], 'pear');
+	});
+
+	it('test getUserItems', async function() {
+		const userItems = await databaseAdapter.getUserItems(customer);
+		assert.isOk(userItems);
+	});
+
+	it('test setUserItems', async function() {
+		var userItems = [];
+		userItems.push(apple);
+		userItems.push(pear);
+
+		customer.setId("mdc");
+		databaseAdapter.setUserItems(customer, userItems);
+
+		const propagatedItems = await databaseAdapter.getUserItems(customer);
+
+		assert.equal(propagatedItems[0]['cost'], apple.getCost());
+		assert.equal(propagatedItems[1]['cost'], pear.getCost());
 	});
 });

@@ -58,8 +58,9 @@ class DatabaseAdapter {
 		const endpoint = this.baseEndpoint + 'aliases/' + user.getId();
 		
 		// get user aliases without blocking
-		var userCartJSON = await this.sendGetRequest(endpoint);
-		return userCartJSON;
+		var userAliasJSON = await this.sendGetRequest(endpoint);
+		userAliasJSON = JSON.parse("[" + userAliasJSON + "]")[0];
+		return userAliasJSON;
 	}
 
 	async setUserAliases(user, aliases) {
@@ -67,14 +68,14 @@ class DatabaseAdapter {
 		const endpoint = this.baseEndpoint + 'aliases/update/' + user.getId();
 
 		for (let alias of aliases) {
-			const aliasName = alias.getName();
-			const aliasEntry = {aliasName : alias.getLink()};
+			var aliasEntry = {};
+			aliasEntry["name"] = alias.getName();
+			aliasEntry["link"] = alias.getItem().getLink();
 			userAliases['aliases'].push(aliasEntry);
 		}
 
 		var success = await this.sendPostRequest(userAliases, endpoint);
 	}
-
 
 	async sendGetRequest(endpoint) {
 		return new Promise((resolve, reject) => {

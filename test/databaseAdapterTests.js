@@ -1,11 +1,15 @@
 const assert = require('chai').assert;
-const {DatabaseAdapter} = require("../src/databaseAdapter");
 const {Address} = require("../src/address");
+const {Alias} = require("../src/alias");
 const {Customer} = require("../src/customer");
+const {DatabaseAdapter} = require("../src/databaseAdapter");
+const {Item} = require("../src/item");
 
 describe('Database Adapter tests', function() {
 	var databaseAdapter;
 	var customer;
+	var apple;
+	var pear;
 
 	beforeEach(function() {
 		databaseAdapter = new DatabaseAdapter();
@@ -50,6 +54,35 @@ describe('Database Adapter tests', function() {
 	});
 
 	it('test setUserAliases', async function() {
-		var userAliases = {};
+		var userAliases = [];
+		var alias1 = new Alias();
+		alias1.setName("apple");
+		alias1.setCustomer("mdc");
+		apple = new Item();
+		apple.setLink("amazon.com/apple");
+		alias1.setItem(apple);
+		userAliases.push(alias1);
+
+		var alias2 = new Alias();
+		alias2.setName("pear");
+		alias2.setCustomer("mdc");
+		pear = new Item();
+		pear.setLink("amazon.com/pear");
+		alias2.setItem(pear);
+		userAliases.push(alias2);
+
+		customer.setId("mdc");
+		databaseAdapter.setUserAliases(customer, userAliases);
+
+		var propagatedAliases = await databaseAdapter.getUserAliases(customer);
+		
+		assert.equal(propagatedAliases[0]['name'], 'apple');
+		assert.equal(propagatedAliases[1]['name'], 'pear');
 	});
 });
+
+
+
+
+
+

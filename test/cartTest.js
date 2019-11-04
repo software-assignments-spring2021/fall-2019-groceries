@@ -7,16 +7,29 @@ describe('Cart (Mongo) Tests', function() {
     beforeEach(function() {
         cart = new Cart({
             username: "testusername",
-            num_items: 3,
-            alias_list: ['apple', 'penne', 'banana']
+            items: [
+                {
+                    name: "banana",
+                    quantity: 5
+                }
+            ],
+            fullItemsInfo: [
+                {
+                    cost: 4.00,
+                    id: "testid",
+                    link: "amazon.com/banana",
+                    name: "banana"
+                }
+            ]
+            
         });
     });
     it('should be invalid if username is blank', function() {
         assert.notEqual(cart.username, "");
     });
-
-    it('num_items element must equal length of alias_list', function() {
-        assert.equal(cart.num_items, cart.alias_list.length);
+    
+    it('should be invalid if items.length and fullItemsInfo.length are not equal', function() {
+        assert.equal(cart.items.length, cart.fullItemsInfo.length);
     });
 });
 

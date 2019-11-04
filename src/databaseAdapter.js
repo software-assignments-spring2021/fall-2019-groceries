@@ -37,6 +37,7 @@ class DatabaseAdapter {
 		
 		// get user's cart without blocking
 		var userCartJSON = await this.sendGetRequest(endpoint);
+		userCartJSON = JSON.parse("[" + userCartJSON  + "]")[0];
 		return userCartJSON;
 	}
 
@@ -44,10 +45,13 @@ class DatabaseAdapter {
 		var cartItems = {'items': []};
 		const endpoint = this.baseEndpoint + 'carts/update/' + user.getId();
 
-		for (let cartItem of cart.getItems()) {
+		for (let cartItem of cart.getItems().values()) {			
+			var itemEntry = {};
 			const item = cartItem.getItem();
-			const itemName = item.getName();
-			const itemEntry = {itemName : cartItem.getQuantity()};
+			itemEntry["name"] = item.getName();
+			itemEntry["cost"] = item.getCost();
+			itemEntry["id"] = item.getId();
+			itemEntry["link"] = item.getLink();
 			cartItems['items'].push(itemEntry);
 		}
 

@@ -1,6 +1,7 @@
 const assert = require('chai').assert;
 const {Address} = require("../src/address");
 const {Alias} = require("../src/alias");
+const {Cart} = require("../src/cart");
 const {Customer} = require("../src/customer");
 const {DatabaseAdapter} = require("../src/databaseAdapter");
 const {Item} = require("../src/item");
@@ -15,6 +16,18 @@ describe('Database Adapter tests', function() {
 		databaseAdapter = new DatabaseAdapter();
 		customer = new Customer();
 		customer.setId("finaltesting");
+
+		apple = new Item();
+		apple.setLink("amazon.com/apple");
+		apple.setCost(5);
+		apple.setName("apple");
+		apple.setId("123");
+
+		pear = new Item();
+		pear.setLink("amazon.com/pear");
+		pear.setCost(5);
+		pear.setName("pear");
+		pear.setId("456");
 	});
 
 	it('test getUserCart', async function() {
@@ -50,7 +63,17 @@ describe('Database Adapter tests', function() {
 	});
 
 	it('test setUserCart', async function() {
-		var userCart = {};
+		var userCart = new Cart();
+		userCart.addItem(apple);
+		userCart.addItem(pear);
+
+		customer.setId("mdc");
+		databaseAdapter.setUserCart(customer, userCart);
+		
+		var propagatedCart = await databaseAdapter.getUserCart(customer);
+		
+		assert.equal(propagatedCart[0]['name'], 'apple');
+		assert.equal(propagatedCart[1]['name'], 'pear');
 	});
 
 	it('test setUserAliases', async function() {
@@ -58,16 +81,14 @@ describe('Database Adapter tests', function() {
 		var alias1 = new Alias();
 		alias1.setName("apple");
 		alias1.setCustomer("mdc");
-		apple = new Item();
-		apple.setLink("amazon.com/apple");
+
 		alias1.setItem(apple);
 		userAliases.push(alias1);
 
 		var alias2 = new Alias();
 		alias2.setName("pear");
 		alias2.setCustomer("mdc");
-		pear = new Item();
-		pear.setLink("amazon.com/pear");
+
 		alias2.setItem(pear);
 		userAliases.push(alias2);
 
@@ -80,9 +101,3 @@ describe('Database Adapter tests', function() {
 		assert.equal(propagatedAliases[1]['name'], 'pear');
 	});
 });
-
-
-
-
-
-

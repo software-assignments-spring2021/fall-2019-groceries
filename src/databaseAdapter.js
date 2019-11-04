@@ -49,9 +49,7 @@ class DatabaseAdapter {
 			var itemEntry = {};
 			const item = cartItem.getItem();
 			itemEntry["name"] = item.getName();
-			itemEntry["cost"] = item.getCost();
-			itemEntry["id"] = item.getId();
-			itemEntry["link"] = item.getLink();
+			itemEntry["quantity"] = cartItem.getQuantity();
 			cartItems['items'].push(itemEntry);
 		}
 

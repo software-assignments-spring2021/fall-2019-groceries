@@ -64,8 +64,8 @@ describe('Database Adapter tests', function() {
 
 	it('test setUserCart', async function() {
 		var userCart = new Cart();
-		userCart.addItem(apple);
-		userCart.addItem(pear);
+		userCart.addItem(apple, 1);
+		userCart.addItem(pear, 2);
 
 		customer.setId("mdc");
 		databaseAdapter.setUserCart(customer, userCart);
@@ -73,7 +73,9 @@ describe('Database Adapter tests', function() {
 		var propagatedCart = await databaseAdapter.getUserCart(customer);
 		
 		assert.equal(propagatedCart[0]['name'], 'apple');
+		assert.equal(propagatedCart[0]['quantity'], 1);
 		assert.equal(propagatedCart[1]['name'], 'pear');
+		assert.equal(propagatedCart[1]['quantity'], 2);
 	});
 
 	it('test setUserAliases', async function() {

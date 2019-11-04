@@ -32,6 +32,29 @@ class DatabaseAdapter {
 		return userData;
 	}
 
+	async getUserAliases(user) {
+		const endpoint = this.baseEndpoint + 'aliases/' + user.getId();
+		
+		// get user aliases without blocking
+		var userAliasJSON = await this.sendGetRequest(endpoint);
+		userAliasJSON = JSON.parse("[" + userAliasJSON + "]")[0];
+		return userAliasJSON;
+	}
+
+	async setUserAliases(user, aliases) {
+		var userAliases = {'aliases': []};
+		const endpoint = this.baseEndpoint + 'aliases/update/' + user.getId();
+
+		for (let alias of aliases) {
+			var aliasEntry = {};
+			aliasEntry["name"] = alias.getName();
+			aliasEntry["link"] = alias.getItem().getLink();
+			userAliases['aliases'].push(aliasEntry);
+		}
+
+		var success = await this.sendPostRequest(userAliases, endpoint);
+	}
+
 	async getUserCart(user) {
 		const endpoint = this.baseEndpoint + 'carts/' + user.getId();
 		
@@ -56,27 +79,27 @@ class DatabaseAdapter {
 		var success = await this.sendPostRequest(cartItems, endpoint);
 	}
 
-	async getUserAliases(user) {
-		const endpoint = this.baseEndpoint + 'aliases/' + user.getId();
-		
-		// get user aliases without blocking
-		var userAliasJSON = await this.sendGetRequest(endpoint);
-		userAliasJSON = JSON.parse("[" + userAliasJSON + "]")[0];
-		return userAliasJSON;
+	async getUserItems(user) {
+		const endpoint = this.baseEndpoint + "items/" + user.getId();
+		var userItems = await this.sendGetRequest(endpoint);
+		userItems = JSON.parse("[" + userItems  + "]")[0];
+		return userItems;
 	}
 
-	async setUserAliases(user, aliases) {
-		var userAliases = {'aliases': []};
-		const endpoint = this.baseEndpoint + 'aliases/update/' + user.getId();
+	async setUserItems(user, items) {
+		var userItems = {'itemsInfo': []};
+		const endpoint = this.baseEndpoint + 'items/update/' + user.getId();
 
-		for (let alias of aliases) {
-			var aliasEntry = {};
-			aliasEntry["name"] = alias.getName();
-			aliasEntry["link"] = alias.getItem().getLink();
-			userAliases['aliases'].push(aliasEntry);
+		for (let item of items) {
+			var itemEntry = {};
+			itemEntry["id"] = item.getId();
+			itemEntry["name"] = item.getName();
+			itemEntry["cost"] = item.getCost();
+			itemEntry["link"] = item.getLink();
+			userItems["itemsInfo"].push(itemEntry);
 		}
 
-		var success = await this.sendPostRequest(userAliases, endpoint);
+		var result = await this.sendPostRequest(userItems, endpoint);
 	}
 
 	async sendGetRequest(endpoint) {

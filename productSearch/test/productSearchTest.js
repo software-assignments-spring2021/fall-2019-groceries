@@ -36,6 +36,8 @@ describe('Product search tests', function() {
         
         var result = search.searchItem("Apple").responseText;
 
+	//delete after the stakeholders demo
+	console.log(result);
        
         assert.isFalse(result == "error");
         

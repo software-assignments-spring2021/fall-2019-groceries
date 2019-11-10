@@ -1,62 +1,66 @@
 const assert = require('chai').assert;
-const sinon = require('sinon');
 
-const {Cart} = require("../src/cart");
-const {DisplayUserCartRequest} = require("../src/userRequests");
+const {Customer} = require("../src/customer");
+const {DatabaseAdapter} = require("../src/databaseAdapter");
+const {DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../src/userRequests");
 const {RequestProcessor} = require('../src/requestProcessor');
 
-
-class MockDatabase {
-	constructor(cart) {
-		this.cart = cart;
+/*
+	In lieu of Sinon not working, make our own bot mock
+*/
+class MockBot {
+	constructor() {
+		this.lastResponse = null;
 	}
 
-	getUserCart(user) {
-		return this.cart;
+	getLastResponse() {
+		return this.lastResponse;
+	}
+
+	onDisplayUserAliasesResponse(response) {
+		this.lastResponse = response;
+		return true;
+	}
+
+	onDisplayUserCartResponse(response) {
+		this.lastResponse = response;
+		return true;
 	}
 }
 
 describe('RequestProcessor tests', function() {
 	var bot;
-	var cart;
 	var database;
-	var user;
 	var request;
-	var requestProcessor;
+	var user;	
 
 	beforeEach(function() {
-		cart = new Cart();
-		user = sinon.fake();
+		bot = new MockBot();
+		database = new DatabaseAdapter();
 
-		request = new DisplayUserCartRequest();
+		user = new Customer();
+		user.setId("mdc555");
+
 		requestProcessor = new RequestProcessor();
-		
+		requestProcessor.setBot(bot);
+		requestProcessor.setDatabase(database);
 	});
 
-	it('Test onDisplayUserCartRequest does not respond to bot', function() {
-		// TODO: Fix sinon
-		// bot = sinon.fake();
-		// requestProcessor.setBot(bot);
+	it('Test replies with correct user cart', function() {
+		request = new DisplayUserCartRequest();
+		request.setUser(user);
 
-		// var dbAPI = { getUserCart: function (user) {} };
-		// database = sinon.mock(dbAPI);
-		// requestProcessor.setDatabase(database);
-		
-		// requestProcessor.onDisplayUserCartRequest(request);
-		// assert(bot.notCalled);
+		requestProcessor.onDisplayUserCartRequest(request);
+
+		assert.ok(bot.getLastResponse().getResponseText());
 	});
 
-	it('Test onDisplayUserCartRequest returns cart on well-formed request', function() {
-		// TODO: Fix sinon
-		// bot = sinon.fake();
-		// requestProcessor.setBot(bot);
+	it('Test replies with correct user aliases', function() {
+		request = new DisplayUserAliasesRequest();
+		request.setUser(user);
 
-		// var dbAPI = { getUserCart: function (user) {} };
-		// database = sinon.mock(dbAPI);
-		// requestProcessor.setDatabase(database);
+		requestProcessor.onDisplayUserAliasesRequest(request);
 
-		// request.setUser(user);
-		// requestProcessor.onDisplayUserCartRequest(request);
-		// assert(bot.calledOnce);
+		assert.ok(bot.getLastResponse().getResponseText());
 	});
 });

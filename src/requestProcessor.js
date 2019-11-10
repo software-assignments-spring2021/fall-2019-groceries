@@ -1,4 +1,5 @@
 const {AddCartItemResponse, DisplayUserAliasesResponse, DisplayUserCartResponse} = require("./userResponses");
+var sleep = require('system-sleep');
 
 class RequestProcessor {
 	constructor() {
@@ -19,62 +20,52 @@ class RequestProcessor {
 		this.marketplace = marketplace;
 	}
 
-	async onDisplayUserCartRequest(request) {
-        const user = request.getUser();
+	onDisplayUserCartRequest(request) {
+		var userResponse = new DisplayUserCartResponse();
+		const user = request.getUser();		
+		userResponse.setUser(user);
+		
         if (user === null) {
+			userResponse.setResponseText("User is not defined");
+			const success = this.bot.onDisplayUserCartResponse(userResponse);
             return;
-        }
-
-        // get the user's cart from Mongo without blocking
-        const userCart = await this.database.getUserCart(user);
-
-        var responseText;
+		}
+		
+		const userCart =  this.database.getUserCart(user);
+				
         if (userCart === null) {
-        	responseText = "User cart is empty";
+        	userResponse.setResponseText("User cart is empty");
         }
         else {
-        	responseText = userCart.toString();
+        	userResponse.setResponseText(userCart);
         }
 
-        // populate response to send to bot
-        var userResponse = new DisplayUserCartResponse();
-        userResponse.setUser(user);
-        userResponse.setResponseText(responseText);
-                
         // send response to bot without blocking
-        const success = await bot.onDisplayUserCartResponse(userResponse);
+        this.bot.onDisplayUserCartResponse(userResponse);
     }
 
-    async onDisplayUserAliasesRequest(request) {
-    	const user = request.getUser();
+    onDisplayUserAliasesRequest(request) {
+		var userResponse = new DisplayUserAliasesResponse();
+		const user = request.getUser();
+		userResponse.setUser(user);	
+		
     	if (user === null) {
+			userResponse.setResponseText("User is not defined");
+			this.bot.onDisplayUserAliasesResponse(userResponse);
     		return;
-    	}
-
-    	// populate response to send to bot
-    	var userResponse = new DisplayUserAliasesResponse();
-    	userResponse.setUser(user);
-
-    	// get the user's aliases from database without blocking
-    	const userAliases = await this.database.getUserAliases(user);
-    	var responseText;
+    	}    	
+		
+		const userAliases = this.database.getUserAliases(user);
 
     	if (userAliases === null) {
-    		responseText = "User does not have any aliases defined";
+    		userResponse.setResponseText("User does not have any aliases defined");
     	}
     	else {
-    		responseText = "";
-    		for (let userAlias of userAliases) {
-    			const aliasedItem = alias.getItem();
-    			responseText += userAlias.getName() + ": " + aliasedItem.getName();
-    			responseText += "\n";
-    		}
+    		userResponse.setResponseText(userAliases);
     	}    	
 
-    	// send response to bot without blocking
-    	userResponse.setResponseText(responseText);    	
-    	const success = await bot.onDisplayUserAliasesResponse(userResponse);
-    }
+    	this.bot.onDisplayUserAliasesResponse(userResponse);
+	}
 }
 
 module.exports = {

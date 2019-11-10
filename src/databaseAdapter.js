@@ -1,4 +1,5 @@
 const request = require('request');
+var sleep = require('system-sleep');
 
 class DatabaseAdapter {
 	constructor() {
@@ -103,9 +104,9 @@ class DatabaseAdapter {
 	}
 
 	async sendGetRequest(endpoint) {
-		return new Promise((resolve, reject) => {
-			request(endpoint, function(err, res, body) {
-	    		return resolve(body);
+		return new Promise((resolve, reject) => {			
+			request(endpoint, function(err, res, body) {				
+				return resolve(body);
 			});	
 		});	
 	}

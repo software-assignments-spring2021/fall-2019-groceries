@@ -1,4 +1,5 @@
 const assert = require('chai').assert;
+const expect = require('chai').expect;
 
 const {Customer} = require("../src/customer");
 const {DatabaseAdapter} = require("../src/databaseAdapter");
@@ -39,7 +40,7 @@ describe('RequestProcessor tests', function() {
 		database = new DatabaseAdapter();
 
 		user = new Customer();
-		user.setId("mdc555");
+		user.setId("mdc");
 
 		requestProcessor = new RequestProcessor();
 		requestProcessor.setBot(bot);
@@ -52,7 +53,10 @@ describe('RequestProcessor tests', function() {
 
 		requestProcessor.onDisplayUserCartRequest(request);
 
-		assert.ok(bot.getLastResponse().getResponseText());
+		return bot.getLastResponse().getResponseText()
+		.then((response)=> {
+			expect(response[0]['name']).to.equal('apple');
+		})
 	});
 
 	it('Test replies with correct user aliases', function() {
@@ -61,6 +65,9 @@ describe('RequestProcessor tests', function() {
 
 		requestProcessor.onDisplayUserAliasesRequest(request);
 
-		assert.ok(bot.getLastResponse().getResponseText());
+		return bot.getLastResponse().getResponseText()
+		.then((response)=> {
+			expect(response[0]['link']).to.equal('amazon.com/apple');
+		})
 	});
 });

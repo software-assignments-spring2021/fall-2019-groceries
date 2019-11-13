@@ -1,56 +1,63 @@
-// const TelegramBot = require('node-telegram-bot-api');
-// //process.env["NTBA_FIX_319"] = 1
+const TelegramBot = require('node-telegram-bot-api');
+const userReq = require("../../src/userRequests")
+const userRes = require("../../src/userResponses")
+process.env["NTBA_FIX_319"] = 1
 
-// //TODO:REMOVE KEY BEFORE GIT PUSH
-// //const token = ""
-// //const bot = new TelegramBot(token, {polling: true});
+//TODO:REMOVE KEY BEFORE GIT PUSH
+const token = ""
+const bot = new TelegramBot(token, {polling: true});
 
-// bot.onText(/\/start/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
-// Type /help for more info`;
-//   bot.sendMessage(fromId, response);
-// });
+bot.onText(/\/start/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
+Type /help for more info`;
+  bot.sendMessage(fromId, response);
+});
 
-// bot.onText(/\/help/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
-// List of commands (use drop down menu as well): \n
-// /help - I'll hold your hand bb and help you \n
-// /createUser - I'll help you to create your user account \n
-// /cart - I'll create the virtual cart for you (food comes in bits) \n
-// /add <number> <item> - I'll add an item in your cart \n
-// /search <item> - I'll help you to find an item \n
-// `;
-//   bot.sendMessage(fromId, response);
-// });
+bot.onText(/\/help/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
+List of commands (use drop down menu as well): \n
+/help - I'll hold your hand and help you \n
+/createUser - I'll help you to create your user account \n
+/cart - I'll create the virtual cart for you (food comes in bits) \n
+/add <number> <item> - I'll add an item in your cart \n
+/search <item> - I'll help you to find an item \n
+`;
+  bot.sendMessage(fromId, response);
+});
 
-// bot.onText(/\/cart/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Now I'm going to create your virtual cart`;
-//   bot.sendMessage(fromId, response);
-// });
+bot.onText(/\/cart/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Now I'm going to create your virtual cart`;
+  bot.sendMessage(fromId, response);
+});
 
-// bot.onText(/\/createUser/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Let's set you up as the user \n
-//   Use /setName to set your username \n
-//   Use /setPassword to set your password \n`;
-//   bot.sendMessage(fromId, response);
-// });
+bot.onText(/\/createUser/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Let's set you up as the user \n
+  Use /setName to set your username \n
+  Use /setPassword to set your password \n`;
+  bot.sendMessage(fromId, response);
+});
 
-// bot.onText(/\/setName/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Username set!`;
-//   bot.sendMessage(fromId, response);
-// });
+bot.onText(/\/setName/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Username set!`;
+  bot.sendMessage(fromId, response);
+});
 
-// bot.onText(/\/setPassword/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Password set!`;
-//   bot.sendMessage(fromId, response);
-// });
+bot.onText(/\/setPassword/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Password set!`;
+  bot.sendMessage(fromId, response);
+});
 
+bot.onText(/\/add/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Item(s) added`;
+  bot.sendMessage(fromId, response);
+});
 
 
 

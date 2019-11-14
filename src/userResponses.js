@@ -21,6 +21,21 @@ class UserResponse {
 	}
 }
 
+class DisplayProductSearchResponse extends UserResponse {
+	constructor() {
+		super();
+		this.productName = null;
+	}
+
+	getProductName() {
+		return this.productName;
+	}
+
+	setProductName(productName) {
+		this.productName = productName;
+	}	
+}
+
 class DisplayUserAliasesResponse extends UserResponse {
 	constructor() {
 		super();
@@ -34,6 +49,7 @@ class DisplayUserCartResponse extends UserResponse {
 }
 
 module.exports = {
+	DisplayProductSearchResponse,
 	DisplayUserAliasesResponse,
 	DisplayUserCartResponse
 }

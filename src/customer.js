@@ -7,7 +7,8 @@ class Customer {
         this.username = null;
         this.password = null; 
     }
-
+    //id & name difference
+    //cart object
     getAddress() {
         return this.address;
     }

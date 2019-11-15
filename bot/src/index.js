@@ -1,11 +1,29 @@
 const TelegramBot = require('node-telegram-bot-api');
-const userReq = require("../../src/userRequests")
-const userRes = require("../../src/userResponses")
+const userReq = require("../../src/userRequests");
+const userRes = require("../../src/userResponses");
+const {Customer} = require("../../src/customer");
+const {DatabaseAdapter} = require("../../src/databaseAdapter");
+const {DisplayProductSearchRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
+const {RequestProcessor} = require('../../src/requestProcessor');
+
 process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 const token = ""
-const bot = new TelegramBot(token, {polling: true});
+//const bot = new TelegramBot(token, {polling: true});
+//bot commands and data post/get
+var requestPr = new RequestProcessor();
+var dataB = new DatabaseAdapter();
+
+
+var user = new Customer();
+var userInfoArray = [null,null,null];
+//user array = [id,password,adress]
+//change to telegramID
+user.setId(name);
+user.setPassword(password);
+user.setAddress(address)
+
 
 bot.onText(/\/start/, function (msg, match) {
   var fromId = msg.from.id;
@@ -19,7 +37,6 @@ bot.onText(/\/help/, function (msg, match) {
   var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
 List of commands (use drop down menu as well): \n
 /help - I'll hold your hand and help you \n
-/createUser - I'll help you to create your user account \n
 /cart - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n
@@ -29,26 +46,19 @@ List of commands (use drop down menu as well): \n
 
 bot.onText(/\/cart/, function (msg, match) {
   var fromId = msg.from.id;
-  var response = `Now I'm going to create your virtual cart`;
+  var response = `Now I'm going to create your virtual cart
+  type
+  
+  
+  `;
   bot.sendMessage(fromId, response);
 });
 
-bot.onText(/\/createUser/, function (msg, match) {
+bot.onText(/\/setPassword (.+)/, function (msg, match) {
   var fromId = msg.from.id;
-  var response = `Let's set you up as the user \n
-  Use /setName to set your username \n
-  Use /setPassword to set your password \n`;
-  bot.sendMessage(fromId, response);
-});
+  const password = match[1];
+  user.setPassword(password);
 
-bot.onText(/\/setName/, function (msg, match) {
-  var fromId = msg.from.id;
-  var response = `Username set!`;
-  bot.sendMessage(fromId, response);
-});
-
-bot.onText(/\/setPassword/, function (msg, match) {
-  var fromId = msg.from.id;
   var response = `Password set!`;
   bot.sendMessage(fromId, response);
 });
@@ -58,8 +68,6 @@ bot.onText(/\/add/, function (msg, match) {
   var response = `Item(s) added`;
   bot.sendMessage(fromId, response);
 });
-
-
 
 //build list 0 for coms 1 for groceries
 //const build_list => (listo, decider)
@@ -139,11 +147,24 @@ function compare_str(str1,str2){
     return false
   }
 }
+
+function check_for_null(array) {
+  for (let index = 0; index < array.length; index++) {
+    const element = array[index];
+    if (element == null) {
+      return true
+    }
+    
+  }
+  return false
+}
+
 parse_entry('Wow, does that work?')
 module.exports = {
   summarize,
   build_list,
   parse_entry,
-  compare_str
+  compare_str,
+  check_for_null
 
 };

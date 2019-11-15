@@ -21,6 +21,21 @@ class UserRequest {
 	}
 }
 
+class DisplayProductSearchRequest extends UserRequest {
+	constructor() {
+		super();
+		this.productName = null;
+	}
+
+	getProductName() {
+		return this.productName;
+	}
+
+	setProductName(productName) {
+		this.productName = productName;
+	}
+}
+
 class DisplayUserAliasesRequest extends UserRequest {
 	constructor() {
 		super();
@@ -34,6 +49,7 @@ class DisplayUserCartRequest extends UserRequest {
 }
 
 module.exports = {
+	DisplayProductSearchRequest,
 	DisplayUserAliasesRequest,
-    DisplayUserCartRequest
+	DisplayUserCartRequest	
 };

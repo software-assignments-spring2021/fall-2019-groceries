@@ -3,7 +3,10 @@ const expect = require('chai').expect;
 
 const {Customer} = require("../src/customer");
 const {DatabaseAdapter} = require("../src/databaseAdapter");
-const {DisplayProductSearchRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../src/userRequests");
+const {AddCartItemRequest, 
+	   DisplayProductSearchRequest, 
+	   DisplayUserAliasesRequest, 
+	   DisplayUserCartRequest} = require("../src/userRequests");
 const {RequestProcessor} = require('../src/requestProcessor');
 
 /*
@@ -16,6 +19,11 @@ class MockBot {
 
 	getLastResponse() {
 		return this.lastResponse;
+	}
+
+	onAddCartItemResponse(response) {
+		this.lastResponse = response;
+		return true;
 	}
 
 	onDisplayProductSearchResponse(response) {
@@ -113,6 +121,30 @@ describe('RequestProcessor tests', function() {
 		return bot.getLastResponse().getResponseText()
 		.then((response) => {
 			expect(JSON.parse(response)[0]['name']).to.equal('Organic Apples');
+		})
+	});
+
+	it('Test adds item to cart from bot request', function() {
+		var originalQuantity;
+		
+		// first, get the existing cart and track the existing number of items
+		request = new DisplayUserCartRequest();
+		request.setUser(user);
+		requestProcessor.onDisplayUserCartRequest(request);
+		bot.getLastResponse().getResponseText()
+		.then((response) => {			
+			originalQuantity = response[0]['quantity'];
+		})
+
+		request = new AddCartItemRequest();
+		request.setUser(user);
+		request.setItemAlias('apple');
+		request.setItemQuantity(5);
+
+		return requestProcessor.onAddCartItemRequest(request)
+		.then(() => {
+			var propagatedCart = bot.getLastResponse().getResponseText();
+			expect(propagatedCart[0]['quantity']).to.equal(originalQuantity + 5);
 		})
 	});
 });

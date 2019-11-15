@@ -21,6 +21,12 @@ class UserResponse {
 	}
 }
 
+class AddCartItemResponse extends UserResponse {
+	constructor() {
+		super();
+	}
+}
+
 class DisplayProductSearchResponse extends UserResponse {
 	constructor() {
 		super();
@@ -49,6 +55,7 @@ class DisplayUserCartResponse extends UserResponse {
 }
 
 module.exports = {
+	AddCartItemResponse,
 	DisplayProductSearchResponse,
 	DisplayUserAliasesResponse,
 	DisplayUserCartResponse

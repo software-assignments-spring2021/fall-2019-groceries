@@ -65,6 +65,12 @@ class DatabaseAdapter {
 		return userCartJSON;
 	}
 
+	async setUserCartFromJSON(user, cartJSON) {
+		const endpoint = this.baseEndpoint + 'carts/update/' + user.getId();
+		var result = await this.sendPostRequest(cartJSON, endpoint);
+		return result;
+	}
+
 	async setUserCart(user, cart) {
 		var cartItems = {'items': []};
 		const endpoint = this.baseEndpoint + 'carts/update/' + user.getId();

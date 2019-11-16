@@ -30,7 +30,24 @@ describe('Database Adapter tests', function() {
 		pear.setId("456");
 	});
 
+	it('test setUserCart', async function() {
+		var userCart = new Cart();
+		userCart.addItem(apple, 1);
+		userCart.addItem(pear, 2);
+
+		customer.setId("mdc");
+		await databaseAdapter.setUserCart(customer, userCart);
+		
+		var propagatedCart = await databaseAdapter.getUserCart(customer);
+		
+		assert.equal(propagatedCart[0]['name'], 'apple');
+		assert.equal(propagatedCart[0]['quantity'], 1);
+		assert.equal(propagatedCart[1]['name'], 'pear');
+		assert.equal(propagatedCart[1]['quantity'], 2);
+	});
+
 	it('test getUserCart', async function() {
+		customer.setId("mdc");
 		var cart = await databaseAdapter.getUserCart(customer);
 		assert.isOk(cart);
 	});
@@ -62,20 +79,28 @@ describe('Database Adapter tests', function() {
 		assert.equal(userData["password"], "$$$");
 	});
 
-	it('test setUserCart', async function() {
-		var userCart = new Cart();
-		userCart.addItem(apple, 1);
-		userCart.addItem(pear, 2);
+	it('test setUserCartFromJSON', async function() {
+		const userCartJSON = {
+			'items' : [
+				{
+					'name': 'apple',
+					'quantity': 3
+				}, 
+				{
+					'name': 'pear',
+					'quantity': 3
+				}
+			]
+		};
 
 		customer.setId("mdc");
-		databaseAdapter.setUserCart(customer, userCart);
-		
+		var result = await databaseAdapter.setUserCartFromJSON(customer, userCartJSON);		
 		var propagatedCart = await databaseAdapter.getUserCart(customer);
 		
 		assert.equal(propagatedCart[0]['name'], 'apple');
-		assert.equal(propagatedCart[0]['quantity'], 1);
+		assert.equal(propagatedCart[0]['quantity'], 3);
 		assert.equal(propagatedCart[1]['name'], 'pear');
-		assert.equal(propagatedCart[1]['quantity'], 2);
+		assert.equal(propagatedCart[1]['quantity'], 3);
 	});
 
 	it('test setUserAliases', async function() {

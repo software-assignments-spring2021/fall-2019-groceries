@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const {Customer} = require("../src/customer");
 const {DatabaseAdapter} = require("../src/databaseAdapter");
 const {AddCartItemRequest, 
+	   AddUserAliasRequest,
 	   DisplayProductSearchRequest, 
 	   DisplayUserAliasesRequest, 
 	   DisplayUserCartRequest} = require("../src/userRequests");
@@ -22,6 +23,11 @@ class MockBot {
 	}
 
 	onAddCartItemResponse(response) {
+		this.lastResponse = response;
+		return true;
+	}
+
+	onAddUserAliasResponse(response) {
 		this.lastResponse = response;
 		return true;
 	}
@@ -145,6 +151,21 @@ describe('RequestProcessor tests', function() {
 		.then(() => {
 			var propagatedCart = bot.getLastResponse().getResponseText();
 			expect(propagatedCart[0]['quantity']).to.equal(originalQuantity + 5);
+		})
+	});
+
+	it('Test adds user alias from bot request', function() {
+		request = new AddUserAliasRequest();
+		request.setUser(user);
+		request.setAliasName('my favorite apple');
+		request.setAliasLink('amazon.com/apple');
+
+		return requestProcessor.onAddUserAliasRequest(request)
+		.then(() => {
+			var propagatedAliases = bot.getLastResponse().getResponseText()
+			console.log(propagatedAliases);
+			expect(propagatedAliases[2]['link']).to.equal('amazon.com/apple');
+			expect(propagatedAliases[2]['name']).to.equal('my favorite apple');
 		})
 	});
 });

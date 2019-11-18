@@ -56,6 +56,12 @@ class DatabaseAdapter {
 		var success = await this.sendPostRequest(userAliases, endpoint);
 	}
 
+	async setUserAliasesFromJSON(user, aliases) {
+		var userAliases = {'aliases': aliases};
+		const endpoint = this.baseEndpoint + 'aliases/update/' + user.getId();
+		var success = await this.sendPostRequest(userAliases, endpoint);
+	}
+
 	async getUserCart(user) {
 		const endpoint = this.baseEndpoint + 'carts/' + user.getId();
 		

@@ -4,17 +4,18 @@ const assert = require('chai').assert;
 const search = require("../productSearch.js");
 
 describe('Product search tests', function() {
-
+    this.timeout(10000);
    
     //supposed to be false, which makes the test return false, meaning we dont get results
     it('Checking if we get search results', function() {
         
-        var result = search.searchItem("9846450787979899685906584");
+        var result = search.searchItem("banana");
 
-        var count = Object.keys(result.responseText).length;
-       
-        assert.isFalse(result > 114);
-       
+        var resultJSON = JSON.parse(result.responseText);
+        
+        
+        assert.isNotEmpty(resultJSON.results)
+        
 
     });
     
@@ -22,11 +23,12 @@ describe('Product search tests', function() {
     //this returns true because there are search results
     it('Checking if we get search results', function() {
         
-        var result = search.searchItem("Apple");
+        var result = search.searchItem("garmin");
 
-        var count = Object.keys(result.responseText).length;
-      
-        assert.isFalse(result > 114);
+        var resultJSON = JSON.parse(result.responseText);
+        
+        
+        assert.isNotEmpty(resultJSON.results)
         
 
     });
@@ -58,7 +60,7 @@ describe('Product search tests', function() {
     //this returns true if the server, amazon, is up and running
     it('Checks server, amazon, is up and running', function() {
         
-        var result = search.searchItem("08-47549867945867089").status;
+        var result = search.searchItem("racecar").status;
 
         
         assert.isTrue(result == 200);

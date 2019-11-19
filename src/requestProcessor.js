@@ -1,4 +1,8 @@
-const {AddCartItemResponse, DisplayProductSearchResponse, DisplayUserAliasesResponse, DisplayUserCartResponse} = require("./userResponses");
+const {AddCartItemResponse, 
+	   AddUserAliasResponse,
+	   DisplayProductSearchResponse, 
+	   DisplayUserAliasesResponse, 
+	   DisplayUserCartResponse} = require("./userResponses");
 var sleep = require('system-sleep');
 
 class RequestProcessor {
@@ -18,6 +22,143 @@ class RequestProcessor {
 
 	setMarketplace(marketplace) {
 		this.marketplace = marketplace;
+	}
+
+	onAddUserAliasRequest(request) {
+		var userResponse = new AddUserAliasResponse();
+		const user = request.getUser();
+		userResponse.setUser(user);
+
+		if (user === null) {
+			userResponse.setResponseText("User is not defined");
+			this.bot.onAddUserAliasResponse(userResponse);
+			return;
+		}
+
+		const aliasName = request.getAliasName();
+		const aliasLink = request.getAliasLink();
+
+		if (aliasName === null) {
+			userResponse.setResponseText("Alias item is not defined");
+			this.bot.onAddUserAliasResponse(userResponse);
+			return;
+		}
+
+		if (aliasLink === null) {
+			userResponse.setResponseText("Alias link is not defined");
+			this.bot.onAddUserAliasResponse(userResponse);
+			return;
+		}
+
+		return new Promise((resolve, reject) => {
+			this.database.getUserAliases(user)
+			.then((userAliases) => {
+				var newAliasJSON = [];
+				for (let alias of userAliases) {
+					if (alias['name'] === aliasName) {
+						userResponse.setResponseText("Alias " + aliasName  
+							 + " is already defined");
+						this.bot.onAddUserAliasResponse(userResponse);
+						return resolve();
+					}
+					else {
+						newAliasJSON.push({
+							'name' : alias['name'], 
+							'link' : alias['link']
+						});
+					}
+				}
+
+				newAliasJSON.push({'name': aliasName, 'link': aliasLink});
+
+				this.database.setUserAliasesFromJSON(user, newAliasJSON)
+				.then(() => {
+					this.database.getUserAliases(user)
+					.then((newAliases) => {
+						userResponse.setResponseText(newAliases);
+						this.bot.onAddUserAliasResponse(userResponse);
+						return resolve();
+					})
+				})
+			})
+		});
+	}
+
+	onAddCartItemRequest(request) {
+		var userResponse = new AddCartItemResponse();
+		const user = request.getUser();
+		userResponse.setUser(user);
+
+		if (user === null) {
+			userResponse.setResponseText("User is not defined");
+			this.bot.onAddCartItemResponse(userResponse);
+			return;
+		}
+
+		const itemAlias = request.getItemAlias();
+		const itemQuantity = request.getItemQuantity();
+
+		if (itemAlias === null) {
+			userResponse.setResponseText("Item alias is null");
+			this.bot.onAddCartItemResponse(userResponse);
+    		return;
+		}
+
+		return new Promise((resolve, reject) => {
+			this.database.getUserAliases(user)
+			.then((userAliases) => {
+				var aliasFound = false;
+				const numAliases = Object.keys(userAliases).length;
+				
+				for (let i = 0; i < numAliases; i++) {
+					if (userAliases[i]['name'] == itemAlias) {
+						aliasFound = true;
+						break;
+					}
+				}
+	
+				if (!aliasFound) {
+					userResponse.setResponseText("Unknown alias: " + alias);
+					this.bot.onAddCartItemResponse(userResponse);
+					return;
+				}
+	
+				if (itemQuantity == null || itemQuantity < -1) {
+					userResponse.setResponseText("Item quantity is null");
+					this.bot.onAddCartItemResponse(userResponse);
+					return;
+				}
+		
+				this.database.getUserCart(user)
+				.then((userCart) => {
+					var itemFound = false;
+					const numCartItems = Object.keys(userCart).length;
+					for (let i = 0; i < numCartItems; i++) {
+						if (userCart[i]['name'] == itemAlias) {
+							userCart[i]['quantity'] += itemQuantity;
+							itemFound = true;
+							break;
+						}
+					}
+	
+					if (!itemFound) {
+						userCart.push({'name' : itemAlias, 'quantity' : itemQuantity});
+					}
+	
+					userCart = {'items' : userCart};
+	
+					this.database.setUserCartFromJSON(user, userCart)
+					.then(() => {
+						this.database.getUserCart(user)
+						.then((updatedCart) => {
+							userResponse.setResponseText(updatedCart);
+							this.bot.onAddCartItemResponse(userResponse);
+							return resolve();
+						})					
+					}) 				
+				});	
+			})
+		})
 	}
 
 	onDisplayProductSearchRequest(request) {
@@ -84,8 +225,8 @@ class RequestProcessor {
 			const success = this.bot.onDisplayUserCartResponse(userResponse);
             return;
 		}
-		
-		const userCart =  this.database.getUserCart(user);
+			
+		const userCart = this.database.getUserCart(user);
 				
         if (userCart === null) {
         	userResponse.setResponseText("User cart is empty");

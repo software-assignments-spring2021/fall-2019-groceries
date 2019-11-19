@@ -21,6 +21,54 @@ class UserRequest {
 	}
 }
 
+class AddCartItemRequest extends UserRequest {
+	constructor() {
+		super();
+		this.itemAlias = null;
+		this.itemQuantity = null;
+	}
+
+	getItemAlias() {
+		return this.itemAlias;
+	}
+
+	getItemQuantity() { 
+		return this.itemQuantity;
+	}
+
+	setItemAlias(itemAlias) {
+		this.itemAlias = itemAlias;
+	}
+
+	setItemQuantity(itemQuantity) {
+		this.itemQuantity = itemQuantity;
+	}
+}
+
+class AddUserAliasRequest extends UserRequest {
+	constructor() {
+		super();
+		this.aliasLink = null;
+		this.aliasName = null;		
+	}
+
+	getAliasLink() {
+		return this.aliasLink;
+	}
+
+	setAliasLink(aliasLink) {
+		this.aliasLink = aliasLink;
+	}
+
+	getAliasName() {
+		return this.aliasName;
+	}
+
+	setAliasName(aliasName) {
+		this.aliasName = aliasName;
+	}
+}
+
 class DisplayProductSearchRequest extends UserRequest {
 	constructor() {
 		super();
@@ -49,6 +97,8 @@ class DisplayUserCartRequest extends UserRequest {
 }
 
 module.exports = {
+	AddCartItemRequest,
+	AddUserAliasRequest,
 	DisplayProductSearchRequest,
 	DisplayUserAliasesRequest,
 	DisplayUserCartRequest	

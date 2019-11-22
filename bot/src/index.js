@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
+const userReq = require("../../src/userRequests");
+const userRes = require("../../src/userResponses");
 const {Customer} = require("../../src/customer");
-const {Address} = require("../../src/address");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
 const {DisplayProductSearchRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
@@ -9,17 +10,20 @@ process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 const token = ""
-const bot = new TelegramBot(token, {polling: true});
+//const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get
-//var requestPr = new RequestProcessor();
+var requestPr = new RequestProcessor();
 var dataB = new DatabaseAdapter();
 
 
 var user = new Customer();
-var usrAddress = new Address();
 var userInfoArray = [null,null,null];
-//user array = [id,password,address]
+//user array = [id,password,adress]
 //change to telegramID
+user.setId(name);
+user.setPassword(password);
+user.setAddress(address)
+
 
 bot.onText(/\/start/, function (msg, match) {
   var fromId = msg.from.id;
@@ -33,66 +37,29 @@ bot.onText(/\/help/, function (msg, match) {
   var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
 List of commands (use drop down menu as well): \n
 /help - I'll hold your hand and help you \n
-/cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
+/cart - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n
 `;
   bot.sendMessage(fromId, response);
 });
 
-bot.onText(/\/cart (.+)/, function (msg, match) {
+bot.onText(/\/cart/, function (msg, match) {
   var fromId = msg.from.id;
   var response = `Now I'm going to create your virtual cart
-  type /setpin <pin> to set up a secure code 4 integers ex: 1234 
+  type
+  
+  
   `;
-  user.setId(match[1]);
-  user.setUsername(match[1]);
-  user.setName(match[1]);
   bot.sendMessage(fromId, response);
 });
 
-bot.onText(/\/setpin (.+)/, function (msg, match) {
+bot.onText(/\/setPassword (.+)/, function (msg, match) {
   var fromId = msg.from.id;
-  var response = `Pin set!\n
-  Type /setphone <number> to add your phone number
-  `;
+  const password = match[1];
+  user.setPassword(password);
 
-  user.setPassword(match[1]);
-  bot.sendMessage(fromId, response);
-});
-
-bot.onText(/\/setphone (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  usrAddress.setPhoneNumber(match[1]);
-  var response = `Phone number set!
-
-  Type /setaddress <address> to set your address`;
-  bot.sendMessage(fromId, response);
-});
-
-bot.onText(/\/setaddress (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  usrAddress.setAddressLine1(match[1]);
-  user.setAddress(usrAddress);
-  var response = `Address set! Your cart has been created`;
-
-  var resp = async function(){
-    var resp = await dataB.addUser(user);
-  }
-  resp();
-  bot.sendMessage(fromId, response);
-});
-
-bot.onText(/\/displayuser (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  user.setId(match[1]);
-  var data = async function(){
-    var resp = dataB.getUserData(user).resolve();
-    return resp
-  }
-
-  var usrData = data();
-  var response = usrData["username"];
+  var response = `Password set!`;
   bot.sendMessage(fromId, response);
 });
 
@@ -101,33 +68,6 @@ bot.onText(/\/add/, function (msg, match) {
   var response = `Item(s) added`;
   bot.sendMessage(fromId, response);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //build list 0 for coms 1 for groceries
 //const build_list => (listo, decider)

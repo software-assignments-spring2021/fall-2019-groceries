@@ -8,99 +8,103 @@ const {RequestProcessor} = require('../../src/requestProcessor');
 process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
-const token = ""
-const bot = new TelegramBot(token, {polling: true});
-//bot commands and data post/get
-//var requestPr = new RequestProcessor();
-var dataB = new DatabaseAdapter();
+//To start: uncoment bot code and insert the token
+//const token = ""
+// const bot = new TelegramBot(token, {polling: true});
+// //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
+// //var requestPr = new RequestProcessor();
+// var dataB = new DatabaseAdapter();
 
 
-var user = new Customer();
-var usrAddress = new Address();
-var userInfoArray = [null,null,null];
-//user array = [id,password,address]
-//change to telegramID
+// var user = new Customer();
+// var usrAddress = new Address();
+// var userInfoArray = [null,null,null];
 
-bot.onText(/\/start/, function (msg, match) {
-  var fromId = msg.from.id;
-  var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
-Type /help for more info`;
-  bot.sendMessage(fromId, response);
-});
+// var search_user =  new Customer();
+// //user array = [id,password,address]
+// //change to telegramID
 
-bot.onText(/\/help/, function (msg, match) {
-  var fromId = msg.from.id;
-  var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
-List of commands (use drop down menu as well): \n
-/help - I'll hold your hand and help you \n
-/cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
-/add <number> <item> - I'll add an item in your cart \n
-/search <item> - I'll help you to find an item \n
-`;
-  bot.sendMessage(fromId, response);
-});
+// bot.onText(/\/start/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
+// Type /help for more info`;
+//   bot.sendMessage(fromId, response);
+// });
 
-bot.onText(/\/cart (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  var response = `Now I'm going to create your virtual cart
-  type /setpin <pin> to set up a secure code 4 integers ex: 1234 
-  `;
-  user.setId(match[1]);
-  user.setUsername(match[1]);
-  user.setName(match[1]);
-  bot.sendMessage(fromId, response);
-});
+// bot.onText(/\/help/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
+// List of commands (use drop down menu as well): \n
+// /help - I'll hold your hand and help you \n
+// /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
+// /add <number> <item> - I'll add an item in your cart \n
+// /search <item> - I'll help you to find an item \n
+// `;
+//   bot.sendMessage(fromId, response);
+// });
 
-bot.onText(/\/setpin (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  var response = `Pin set!\n
-  Type /setphone <number> to add your phone number
-  `;
+// bot.onText(/\/cart (.+)/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   var response = `Now I'm going to create your virtual cart
+//   type /setpin <pin> to set up a secure code 4 integers ex: 1234 
+//   `;
+//   user.setId(match[1]);
+//   user.setUsername(match[1]);
+//   user.setName(match[1]);
+//   bot.sendMessage(fromId, response);
+// });
 
-  user.setPassword(match[1]);
-  bot.sendMessage(fromId, response);
-});
+// bot.onText(/\/setpin (.+)/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   var response = `Pin set!\n
+//   Type /setphone <number> to add your phone number
+//   `;
 
-bot.onText(/\/setphone (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  usrAddress.setPhoneNumber(match[1]);
-  var response = `Phone number set!
+//   user.setPassword(match[1]);
+//   bot.sendMessage(fromId, response);
+// });
 
-  Type /setaddress <address> to set your address`;
-  bot.sendMessage(fromId, response);
-});
+// bot.onText(/\/setphone (.+)/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   usrAddress.setPhoneNumber(match[1]);
+//   var response = `Phone number set!
 
-bot.onText(/\/setaddress (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  usrAddress.setAddressLine1(match[1]);
-  user.setAddress(usrAddress);
-  var response = `Address set! Your cart has been created`;
+//   Type /setaddress <address> to set your address`;
+//   bot.sendMessage(fromId, response);
+// });
 
-  var resp = async function(){
-    var resp = await dataB.addUser(user);
-  }
-  resp();
-  bot.sendMessage(fromId, response);
-});
+// bot.onText(/\/setaddress (.+)/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   usrAddress.setAddressLine1(match[1]);
+//   user.setAddress(usrAddress);
+//   var response = `Address set! Your cart has been created`;
 
-bot.onText(/\/displayuser (.+)/, function (msg, match) {
-  var fromId = msg.from.id;
-  user.setId(match[1]);
-  var data = async function(){
-    var resp = dataB.getUserData(user).resolve();
-    return resp
-  }
+//   var resp = async function(){
+//     var resp = await dataB.addUser(user);
+//   }
+//   resp();
+//   bot.sendMessage(fromId, response);
+// });
 
-  var usrData = data();
-  var response = usrData["username"];
-  bot.sendMessage(fromId, response);
-});
 
-bot.onText(/\/add/, function (msg, match) {
-  var fromId = msg.from.id;
-  var response = `Item(s) added`;
-  bot.sendMessage(fromId, response);
-});
+// //function contains method to return the user data or any data from the database
+// bot.onText(/\/displayuser (.+)/, function (msg, match) {
+//   var fromId = msg.from.id;
+  
+//   search_user.setId(match[1]);
+//   var resp = dataB.getUserData(search_user);
+  
+//   resp.then((value) => {
+//     var response = value["username"]
+//     bot.sendMessage(fromId, response);   
+//   })
+// });
+
+// bot.onText(/\/add/, function (msg, match) {
+//   var fromId = msg.from.id;
+//   var response = `Item(s) added`;
+//   bot.sendMessage(fromId, response);
+// });
 
 
 

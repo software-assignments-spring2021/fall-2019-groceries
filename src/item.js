@@ -43,10 +43,10 @@ class Item {
     }
 
     isValid() {
-        return this.cost !== null &&
-               this.id !== null &&
-               this.link !== null &&
-               this.name !== null;
+        
+        return this.id !== null
+               
+               
     }
 }
 

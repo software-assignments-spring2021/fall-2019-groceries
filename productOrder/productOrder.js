@@ -2,29 +2,46 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
     
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
+
 var user = "570FF481878B49158B137BD7";
 var password = '';
 var base64encodedData = new Buffer.from(user + ':' + password).toString('base64');
 
-order();
 
-    function order(){
+module.exports = {
+        
+    orderItem: function(order){
 
         var url = "https://api.zinc.io/v1/orders";
-          
-  
-        var jsonOrder = '{ "retailer": "amazon", "products": ['+
-        '{ "product_id": "B0016NHH56", "quantity": 1 }'+
-        ' ], "max_price": 1, "shipping_address": { "first_name": "Tim", "last_name": "Beaver",'+
-        '"address_line1": "77 Massachusetts Avenue", "address_line2": "","zip_code": "02139", "city": "Cambridge",'+
-        '"state": "MA", "country": "US", "phone_number": "5551230101" }, "payment_method": { "name_on_card": "Ben Bitdiddle",'+
-        '"number": "5555555555554444", "security_code": "123", "expiration_month": 1, "expiration_year": 2020, "use_gift": false},'+
-        '"retailer_credentials": { "email": "timbeaver@gmail.com", "password": "myRetailerPassword" },'+
-        '"billing_address": { "first_name": "William", "last_name": "Rogers", "address_line1": "84 Massachusetts Ave","address_line2": "",'+
-        '"zip_code": "02139","city": "Cambridge","state": "MA","country": "US","phone_number": "5551234567"},'+
-        '"is_gift": true, "gift_message": "Here is your package, Tim! Enjoy!",'+
-        '"shipping_method":"cheapest"}';
 
+        var paymentMethod = order.getPaymentMethod();
+        var shippingAddress = order.getShippingAddress();
+        var billingAddress = order.getBillingAddress();
+        var customer = order.getCustomer();
+        var isGift = order.getIsGift();
+        var maxPrice = order.getMaxPrice();
+        
+        var cart = order.getCart();
+
+        var items = "";
+       
+        for (let cartItem of cart.getItems().values()) {
+
+            items = items + '{ "product_id": "' + cartItem.getItem().getId()+'", "quantity": '+cartItem.getQuantity()+" }, ";
+           
+        }
+
+        items = items.substring(0,items.length-2);
+
+        var jsonOrder = '{ "retailer": "amazon", "products": ['+ items +
+        ' ], "max_price":'+ maxPrice +', "shipping_address": { "first_name": "'+shippingAddress.getFirstName()+'", "last_name": "'+shippingAddress.getLastName()+'",'+
+        '"address_line1": "'+shippingAddress.getAddressLine1()+'", "address_line2": "'+shippingAddress.getAddressLine2()+'","zip_code": "'+shippingAddress.getZipCode()+'", "city": "'+shippingAddress.getCity()+'",'+
+        '"state": "'+shippingAddress.getState()+'", "country": "'+shippingAddress.getCountry()+'", "phone_number": "'+shippingAddress.getPhoneNumber()+'" }, "payment_method": { "name_on_card": "'+paymentMethod.getNameOnCard()+'",'+
+        '"number": "'+paymentMethod.getNumber()+'", "security_code": "'+paymentMethod.getSecurityCode()+'", "expiration_month": '+paymentMethod.getExpirationMonth()+', "expiration_year": '+paymentMethod.getExpirationYear()+', "use_gift": false},'+
+        '"retailer_credentials": { "email": "'+customer.getUsername()+'", "password": "'+customer.getPassword()+'" },'+
+        '"billing_address": { "first_name": "'+billingAddress.getFirstName()+'", "last_name": "'+billingAddress.getLastName()+'", "address_line1": "'+billingAddress.getAddressLine1()+'","address_line2": "'+billingAddress.getAddressLine2()+'",'+
+        '"zip_code": "'+billingAddress.getZipCode()+'","city": "'+billingAddress.getCity()+'","state": "'+billingAddress.getState()+'","country": "'+billingAddress.getCountry()+'","phone_number": "'+billingAddress.getPhoneNumber()+'"},'+
+        '"is_gift":'+ isGift +', '+'"shipping_method":"cheapest"}';
 
 
         xmlHttp = new XMLHttpRequest();  
@@ -37,16 +54,14 @@ order();
 
         var requestID = requestIDJSON.request_id;
         
-        getOrderRequest(requestID);
-
-    
+       
         return requestID;
 
-    }
+    },
 
 
-    function getOrderRequest(requestID){
-
+    getOrderRequest: function(requestID){
+    
         var url = "https://api.zinc.io/v1/orders/"+requestID;
                 
        
@@ -62,4 +77,5 @@ order();
         return orderRequestJSON;
 
     }
-
+    
+}

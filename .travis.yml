@@ -15,3 +15,4 @@ script:
  - npm run test
  - cd bot; npm install --save-dev nyc mocha node-telegram-bot-api; npm run test
  - cd ../productSearch; npm install --save-dev nyc mocha xmlhttprequest; npm run test
+ - cd ../productOrder; npm install --save-dev nyc mocha xmlhttprequest; npm run test

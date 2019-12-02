@@ -1,111 +1,296 @@
 const TelegramBot = require('node-telegram-bot-api');
+const Search = require("../../productSearch/productSearch");
 const {Customer} = require("../../src/customer");
 const {Address} = require("../../src/address");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
 const {DisplayProductSearchRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
+const {Item} = require("../../src/item");
+const {Cart, CartItem} = require("../../src/cart");
+
 
 process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 //To start: uncoment bot code and insert the token
-//const token = ""
-// const bot = new TelegramBot(token, {polling: true});
-// //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
-// //var requestPr = new RequestProcessor();
-// var dataB = new DatabaseAdapter();
+const token = "708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk"
+const bot = new TelegramBot(token, {polling: true});
+//bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
+//var requestPr = new RequestProcessor();
+var dataB = new DatabaseAdapter();
 
 
-// var user = new Customer();
-// var usrAddress = new Address();
-// var userInfoArray = [null,null,null];
+var user = new Customer();
+var usrAddress = new Address();
+var userInfoArray = [null,null,null];
 
-// var search_user =  new Customer();
-// //user array = [id,password,address]
-// //change to telegramID
-
-// bot.onText(/\/start/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
-// Type /help for more info`;
-//   bot.sendMessage(fromId, response);
-// });
-
-// bot.onText(/\/help/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
-// List of commands (use drop down menu as well): \n
-// /help - I'll hold your hand and help you \n
-// /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
-// /add <number> <item> - I'll add an item in your cart \n
-// /search <item> - I'll help you to find an item \n
-// `;
-//   bot.sendMessage(fromId, response);
-// });
-
-// bot.onText(/\/cart (.+)/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Now I'm going to create your virtual cart
-//   type /setpin <pin> to set up a secure code 4 integers ex: 1234 
-//   `;
-//   user.setId(match[1]);
-//   user.setUsername(match[1]);
-//   user.setName(match[1]);
-//   bot.sendMessage(fromId, response);
-// });
-
-// bot.onText(/\/setpin (.+)/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Pin set!\n
-//   Type /setphone <number> to add your phone number
-//   `;
-
-//   user.setPassword(match[1]);
-//   bot.sendMessage(fromId, response);
-// });
-
-// bot.onText(/\/setphone (.+)/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   usrAddress.setPhoneNumber(match[1]);
-//   var response = `Phone number set!
-
-//   Type /setaddress <address> to set your address`;
-//   bot.sendMessage(fromId, response);
-// });
-
-// bot.onText(/\/setaddress (.+)/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   usrAddress.setAddressLine1(match[1]);
-//   user.setAddress(usrAddress);
-//   var response = `Address set! Your cart has been created`;
-
-//   var resp = async function(){
-//     var resp = await dataB.addUser(user);
-//   }
-//   resp();
-//   bot.sendMessage(fromId, response);
-// });
+var searchUser =  new Customer();
+var userItem = new Item();
+var userCart = new Cart();
+var userEntry = new UserEntry();
 
 
-// //function contains method to return the user data or any data from the database
-// bot.onText(/\/displayuser (.+)/, function (msg, match) {
-//   var fromId = msg.from.id;
+class UserEntry{
+  constructor(){
+    this.username = null
+    this.password = null
+    this.number = null
+    this.address = null
+  }
+
+  setUsername(name){
+    this.username = name
+  }
+
+  setPassword(password){
+    this.password = password
+  }
+
+  setNumber(number){
+    this.number = number
+  }
+
+  setAddress(address){
+    this.address = address
+  }
+
+}
+//var userCartItem = new CartItem();
+
+
+// var searchResults = Search.
+// var result = search.searchItem("banana");
+
+// var resultJSON = JSON.parse(result.responseText);
+
+
+
+//user array = [id,password,address]
+//change to telegramID
+
+/* Agile design pattern assignment: (Pattern choice: Adatpter pattern) the goal is to adapt some 
+classes that were made in the inception of the project to the current implementation and fucntionality*/
+
+function UserAdapter(userEntry) {
+  let user = new Customer();
+  let address = new Address();
+
+   
+   address.setAddressLine1(userEntry.address);
+   address.setAddressLine2(userEntry.address);
+   address.setCity(userEntry.address);
+   address.setCountry(userEntry.address);
+   address.setFirstName(userEntry.name);
+   address.setLastName(userEntry.name);
+
+   address.setPhoneNumber(userEntry.number);
+   address.setState(userEntry.address);
+   address.setZipCode(userEntry.address);
+
+   user.setAddress(address);
+   user.setId(userEntry.name);
+   user.setName(userEntry.name);
+   user.setUsername(userEntry.name);
+
+   user.setPassword(userEntry.password);
+   user.setCart(userEntry.name);
+
+  return user;
+}
+
+
+
+bot.onText(/\/start/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `I welcome you my lord, I am but a humble Groceries bot here to help you \n
+Type /help for more info`;
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/help/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Now you've done it! I'll have to work now, here is what you can make me do ( ͡° ͜ʖ ͡°)  \n
+List of commands (use drop down menu as well): \n
+/help - I'll hold your hand and help you \n
+/cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
+/add <number> <item> - I'll add an item in your cart \n
+/search <item> - I'll help you to find an item \n
+`;
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/cart (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Now I'm going to create your virtual cart
+  type /setpin <pin> to set up a secure code 4 integers ex: 1234 
+  `;
+  userEntry.setUsername(match[1]);
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/setpin (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var response = `Pin set!\n
+  Type /setphone <number> to add your phone number
+  `;
+
+  userEntry.setPassword(match[1]);
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/setphone (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setNumber(match[1]);
+  var response = `Phone number set!
+
+  Type /setaddress <address> to set your address`;
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/setaddress (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setAddress(match[1]);
+  var response = `Address set! Your cart has been created`;
+
+  var userData = UserAdapter(userEntry);
+
   
-//   search_user.setId(match[1]);
-//   var resp = dataB.getUserData(search_user);
+  //TODO: check if async can be avoided
+  var resp = async function(){
+    var resp = await dataB.addUser(userData);
+  }
+  resp();
+  bot.sendMessage(fromId, response);
+});
+
+
+//function contains method to return the user data or any data from the database
+bot.onText(/\/displayuser (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
   
-//   resp.then((value) => {
-//     var response = value["username"]
-//     bot.sendMessage(fromId, response);   
-//   })
-// });
+  searchUser.setId(match[1]);
+  var resp = dataB.getUserData(searchUser);
+  
+  resp.then((value) => {
+    var response = value["username"];
+    bot.sendMessage(fromId, response);   
+  })
+});
 
-// bot.onText(/\/add/, function (msg, match) {
-//   var fromId = msg.from.id;
-//   var response = `Item(s) added`;
-//   bot.sendMessage(fromId, response);
-// });
+//TODO: implement single item /add in the no num entered case
 
+//TODO: /add 5 apples  >>
+/*
+1 apples is not recognized as an alias, searching for top choices for apples
+
+2 Items added
+*/
+bot.onText(/\/add (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var array = parse_entry(match[1]);
+
+  
+  //TODO: if quantity is 0 raise error
+  var quantity = parseInt(array[0]);
+  if (quantity < 1) {
+    response = "Invalid number of items, please try again: correct way : /add 5 apples"
+    bot.sendMessage(fromId, response);   
+  }
+  else{
+    //userItem
+
+  // item.setCost(5); -- from search
+	// item.setId("1"); -- not used
+	// item.setLink("amazon.com/item"); -- from search
+  // item.setName("avocado"); -- item name from alias/search
+  // cart.addItem(avocado, 2); -- cart command / loop for more than one item 
+  //
+
+
+
+    //TODO: Check for alias
+    if ((array.length > 1 ) && (array.length < 3)) {
+      // var searchResults = Search.
+      // var result = search.searchItem("banana");
+
+      // var resultJSON = JSON.parse(result.responseText);
+      var searchResults = Search.searchItem(array[1]);
+      var resultJSON = JSON.parse(searchResults.responseText);
+      var cost;
+      var id;
+      var name;
+      var imageLink;
+      var subString = "";
+      var priceString;
+      var pickItem = `Here are the top 5 picks for you. 
+      \nSelect which one you would like to add: \n`;
+      
+      for (let index = 0; index < 5; index++) {
+        subString = subString + (index+1).toString()+`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
+        priceString = (resultJSON["results"][index]["price"]).toString();
+        console.log(priceString);
+        console.log(typeof(priceString));
+        if (priceString.length < 3) {
+          if (priceString.length < 2) {
+            priceString = "0.0"+priceString;
+          }else{
+            priceString = "0."+priceString;
+          }
+
+        } else {
+          priceString = priceString.slice(-2)+"."+priceString.slice((priceString.length-2));
+        }
+        subString = subString + "Price: " + "$" + priceString + "\n";
+        subString = subString + resultJSON["results"][index]["image"] + "\n\n";
+        pickItem = pickItem + subString;
+        
+      }
+      pickItem = pickItem + subString;
+      subString = "";
+
+      bot.sendMessage(fromId, pickItem);
+    } 
+    else if (array.length > 2){
+      response = "Too many keywords entered: correct way : /add 5 apples"
+      bot.sendMessage(fromId, response);
+    }
+    else{
+      response = "Too few keywords entered: correct way : /add 5 apples"
+      bot.sendMessage(fromId, response);
+    }
+    
+  }
+});
+
+/*
+edit user cart
+
+-edit number of items
+
+-edit item
+
+-
+*/
+
+//parent command for cart interaction
+bot.onText(/\/editcart (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+
+  bot.sendMessage(fromId, response);   
+
+});
+
+bot.onText(/\/displayuser (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  
+  search_user.setId(match[1]);
+  var resp = dataB.getUserData(search_user);
+  
+  resp.then((value) => {
+    var response = value["username"];
+    bot.sendMessage(fromId, response);   
+  })
+});
 
 
 
@@ -229,6 +414,7 @@ module.exports = {
   build_list,
   parse_entry,
   compare_str,
-  check_for_null
+  check_for_null,
+  UserEntry
 
 };

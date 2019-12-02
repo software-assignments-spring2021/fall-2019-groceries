@@ -5,6 +5,8 @@ class Order {
         this.id = null;
         this.paymentMethod = null;       
         this.shippingAddress = null;
+        this.isGift = false;
+        this.maxPrice = null;
     }
 
     getBillingAddress() {
@@ -53,6 +55,29 @@ class Order {
         }
 
         this.paymentMethod = paymentMethod;
+    }
+
+    setMaxPrice(maxPrice){
+        this.maxPrice = maxPrice;
+
+    }
+
+    getMaxPrice(){
+        return this.maxPrice;
+    }
+
+
+    setIsGift(isGift){
+
+        this.isGift = isGift;
+
+
+    }
+
+    getIsGift(){
+
+        return this.isGift;
+
     }
 
     getShippingAddress() {

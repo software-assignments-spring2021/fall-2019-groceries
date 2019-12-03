@@ -14,9 +14,16 @@ app.use(express.json());
 const uri = "mongodb+srv://ac6296:419beacon@user-and-cart-cluster-emmhp.mongodb.net/test?retryWrites=true&w=majority";
 
 mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
-const connection = mongoose.connection;
+var connection = null;
 
-connection.once('open', () => {
+function getConnection() {
+    if (connection === null) {
+        connection = mongoose.connection;
+    }
+    return connection;
+}
+
+getConnection().once('open', () => {
     console.log("MongoDB database connection established succesfully");
 });
 

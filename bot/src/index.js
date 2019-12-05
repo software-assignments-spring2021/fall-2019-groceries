@@ -292,30 +292,45 @@ bot.onText(/\/displayuser (.+)/, function (msg, match) {
   })
 });
 
+/* aliases */
 
+var botShim = new IBot();
+var requestProcessor = new RequestProcessor();
+requestProcessor.setBot(botShim);
+requestProcessor.setDatabase(new DatabaseAdapter());
 
+// add alias
+bot.onText(/\/addalias (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
 
+  var request = new AddUserAliasRequest();
+  request.setUser(user);
 
+  var requestArray = parse_entry(match[1]);
+  if (requestArray.length < 2) {
+    bot.sendMessage(user.getId(), "Invalid usage of addalias");
+  }
+  else {
+    var aliasName = requestArray[0];  
+    var aliasLink = requestArray[1];
+  
+    request.setAliasName(aliasName);
+    request.setAliasLink(aliasLink);
+  
+    return requestProcessor.onAddUserAliasRequest(request)
+    .then(() => {
+      var response = botShim.getLastResponse().getResponseText(); 
+      bot.sendMessage(user.getId(), response);
+    })  
+  }
+});
 
+// display aliases
 
+// edit alias
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// remove alias
 
 
 //build list 0 for coms 1 for groceries

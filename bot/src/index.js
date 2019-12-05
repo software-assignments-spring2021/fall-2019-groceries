@@ -115,7 +115,7 @@ List of commands (use drop down menu as well): \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
-/addalias <name> <link> - I'll alias <link> with <name>\n
+/setalias <name> <link> - I'll alias <link> with <name>\n
 `;
   bot.sendMessage(fromId, response);
 });
@@ -300,8 +300,8 @@ var requestProcessor = new RequestProcessor();
 requestProcessor.setBot(botShim);
 requestProcessor.setDatabase(new DatabaseAdapter());
 
-// add alias
-bot.onText(/\/addalias (.+)/, function(msg, match) {
+// set item alias
+bot.onText(/\/setalias (.+)/, function(msg, match) {
   var user = new Customer();
   user.setId(msg.from.id);
 
@@ -310,7 +310,7 @@ bot.onText(/\/addalias (.+)/, function(msg, match) {
 
   var requestArray = parse_entry(match[1]);
   if (requestArray.length < 2) {
-    bot.sendMessage(user.getId(), "Invalid usage of addalias");
+    bot.sendMessage(user.getId(), "Invalid usage of setalias");
   }
   else {
     var aliasName = requestArray[0];  
@@ -328,8 +328,6 @@ bot.onText(/\/addalias (.+)/, function(msg, match) {
 });
 
 // display aliases
-
-// edit alias
 
 // remove alias
 

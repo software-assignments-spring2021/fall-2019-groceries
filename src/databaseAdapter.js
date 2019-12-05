@@ -62,6 +62,20 @@ class DatabaseAdapter {
 		var success = await this.sendPostRequest(userAliases, endpoint);
 	}
 
+	async getCartAliases(user) {
+		const endpoint = this.baseEndpoint + 'cartAliases/' + user.getId();
+		var cartAliasesJSON = await this.sendGetRequest(endpoint);
+		console.log(cartAliasesJSON);
+		cartAliasesJSON = JSON.parse("[" + cartAliasesJSON  + "]")[0];
+		return cartAliasesJSON;
+	}
+
+	async setCartAliasesFromJSON(user, aliases) {
+		var userAliases = {'cartAliases': aliases};
+		const endpoint = this.baseEndpoint + 'cartAliases/update/' + user.getId();
+		await this.sendPostRequest(userAliases, endpoint);
+	}
+
 	async getUserCart(user) {
 		const endpoint = this.baseEndpoint + 'carts/' + user.getId();
 		

@@ -56,10 +56,7 @@ class RequestProcessor {
 				var newAliasJSON = [];
 				for (let alias of userAliases) {
 					if (alias['name'] === aliasName) {
-						userResponse.setResponseText("Alias " + aliasName  
-							 + " is already defined");
-						this.bot.onAddUserAliasResponse(userResponse);
-						return resolve();
+						continue;
 					}
 					else {
 						newAliasJSON.push({
@@ -82,6 +79,10 @@ class RequestProcessor {
 				})
 			})
 		});
+	}
+
+	onSetUserAliasRequest(request) {
+
 	}
 
 	onAddCartItemRequest(request) {

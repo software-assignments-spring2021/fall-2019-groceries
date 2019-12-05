@@ -150,8 +150,8 @@ describe('Database Adapter tests', function() {
 		assert.equal(propagatedAliases[0]['name'], 'weeklyFruit');
 		assert.equal(propagatedAliases[0]['items'][0]['link'], 'amazon.com/apple');
 		assert.equal(propagatedAliases[0]['items'][0]['quantity'], 3);
-		assert.equal(propagatedAliases[0]['items'][0]['link'], 'amazon.com/pear');
-		assert.equal(propagatedAliases[0]['items'][0]['quantity'], 3);
+		assert.equal(propagatedAliases[0]['items'][1]['link'], 'amazon.com/pear');
+		assert.equal(propagatedAliases[0]['items'][1]['quantity'], 3);
 	});
 
 	it('test getUserItems', async function() {

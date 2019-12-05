@@ -114,8 +114,8 @@ List of commands (use drop down menu as well): \n
 /help - I'll hold your hand and help you \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
-/search <item> - I'll help you to find an item \n
-`;
+/search <item> - I'll help you to find an item \n 
+/showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
 });
 
@@ -292,30 +292,33 @@ bot.onText(/\/displayuser (.+)/, function (msg, match) {
   })
 });
 
+/* aliases */
 
+var botShim = new IBot();
+var requestProcessor = new RequestProcessor();
+requestProcessor.setBot(botShim);
+requestProcessor.setDatabase(new DatabaseAdapter());
 
+// add alias
 
+// display aliases
+bot.onText(/\/showaliases (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
 
+  var request = new DisplayUserAliasesRequest();
+  request.setUser(user);
+  
+  requestProcessor.onDisplayUserAliasesRequest(request)
+  .then(() => {
+    var response = botShim.getLastResponse().getResponseText(); 
+    bot.sendMessage(user.getId(), response);
+  })  
+});
 
+// edit alias
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// remove alias
 
 
 //build list 0 for coms 1 for groceries

@@ -115,8 +115,12 @@ List of commands (use drop down menu as well): \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
+<<<<<<< HEAD
 /setalias <name> <link> - I'll alias <link> with <name>\n
 `;
+=======
+/showaliases - I'll show you your aliases \n`;
+>>>>>>> 3f196c228912a99c99fb3d386ec7a66c2f0b777d
   bot.sendMessage(fromId, response);
 });
 
@@ -300,6 +304,7 @@ var requestProcessor = new RequestProcessor();
 requestProcessor.setBot(botShim);
 requestProcessor.setDatabase(new DatabaseAdapter());
 
+<<<<<<< HEAD
 // set item alias
 bot.onText(/\/setalias (.+)/, function(msg, match) {
   var user = new Customer();
@@ -328,6 +333,26 @@ bot.onText(/\/setalias (.+)/, function(msg, match) {
 });
 
 // display aliases
+=======
+// add alias
+
+// display aliases
+bot.onText(/\/showaliases (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
+
+  var request = new DisplayUserAliasesRequest();
+  request.setUser(user);
+  
+  requestProcessor.onDisplayUserAliasesRequest(request)
+  .then(() => {
+    var response = botShim.getLastResponse().getResponseText(); 
+    bot.sendMessage(user.getId(), response);
+  })  
+});
+
+// edit alias
+>>>>>>> 3f196c228912a99c99fb3d386ec7a66c2f0b777d
 
 // remove alias
 

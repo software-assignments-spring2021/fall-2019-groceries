@@ -114,7 +114,8 @@ List of commands (use drop down menu as well): \n
 /help - I'll hold your hand and help you \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
-/search <item> - I'll help you to find an item \n
+/search <item> - I'll help you to find an item \n 
+/addalias <name> <link> - I'll alias <link> with <name>\n
 `;
   bot.sendMessage(fromId, response);
 });

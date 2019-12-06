@@ -163,7 +163,6 @@ describe('RequestProcessor tests', function() {
 		return requestProcessor.onAddUserAliasRequest(request)
 		.then(() => {
 			var propagatedAliases = bot.getLastResponse().getResponseText()
-			console.log(propagatedAliases);
 			expect(propagatedAliases[2]['link']).to.equal('amazon.com/apple');
 			expect(propagatedAliases[2]['name']).to.equal('my favorite apple');
 		})

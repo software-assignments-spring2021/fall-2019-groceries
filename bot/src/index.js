@@ -78,31 +78,28 @@ classes that were made in the inception of the project to the current implementa
 function UserAdapter(userEntry) {
   let user = new Customer();
   let address = new Address();
-
    
    address.setAddressLine1(userEntry.address);
    address.setAddressLine2(userEntry.address);
    address.setCity(userEntry.address);
    address.setCountry(userEntry.address);
-   address.setFirstName(userEntry.name);
-   address.setLastName(userEntry.name);
+   address.setFirstName(userEntry.username);
+   address.setLastName(userEntry.username);
 
    address.setPhoneNumber(userEntry.number);
    address.setState(userEntry.address);
    address.setZipCode(userEntry.address);
 
    user.setAddress(address);
-   user.setId(userEntry.name);
-   user.setName(userEntry.name);
-   user.setUsername(userEntry.name);
+   user.setId(userEntry.username);
+   user.setName(userEntry.username);
+   user.setUsername(userEntry.username);
 
    user.setPassword(userEntry.password);
-   user.setCart(userEntry.name);
+   user.setCart(userEntry.username);
 
   return user;
 }
-
-
 
 bot.onText(/\/start/, function (msg, match) {
   var fromId = msg.from.id;
@@ -159,16 +156,11 @@ bot.onText(/\/setaddress (.+)/, function (msg, match) {
   var response = `Address set! Your cart has been created`;
 
   var userData = UserAdapter(userEntry);
-
-  
-  //TODO: check if async can be avoided
-  var resp = async function(){
-    var resp = await dataB.addUser(userData);
-  }
-  resp();
-  bot.sendMessage(fromId, response);
+ 
+  dataB.addUser(userData).then(() => {
+    bot.sendMessage(fromId, response);
+  })  
 });
-
 
 //function contains method to return the user data or any data from the database
 bot.onText(/\/displayuser (.+)/, function (msg, match) {
@@ -305,27 +297,33 @@ var requestProcessor = new RequestProcessor();
 requestProcessor.setBot(botShim);
 requestProcessor.setDatabase(new DatabaseAdapter());
 
-// add alias
-
 // display aliases
-bot.onText(/\/showaliases (.+)/, function(msg, match) {
+bot.onText(/\/showaliases/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var request = new DisplayUserAliasesRequest();
   request.setUser(user);
   
   requestProcessor.onDisplayUserAliasesRequest(request)
-  .then(() => {
-    var response = botShim.getLastResponse().getResponseText(); 
-    bot.sendMessage(user.getId(), "Current aliases:\n" + response);
-  })  
+  botShim.getLastResponse().getResponseText().then((response) => {
+    if (response.includes("Error")) {
+      message = "Error: No aliases defined for user " + user.getId();
+    }
+    else {
+      var message = "Current aliases:\n";
+      for (let alias of response)
+        message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+    }
+
+    bot.sendMessage(msg.from.id, message);
+  })
 });
 
 // set item alias
 bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var inputArray = parse_entry(match[1]);
 
@@ -338,17 +336,21 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   request.setAliasName(inputArray[0]);
   request.setAliasLink(inputArray[1]);
   
-  requestProcessor.onAddUserAliasRequest(request)
-  .then(() => {
-    var response = botShim.getLastResponse().getResponseText(); 
-    bot.sendMessage(user.getId(), "Current aliases:\n" + response);
-  })  
+  requestProcessor.onAddUserAliasRequest(request).then(() => {
+    var response = botShim.getLastResponse().getResponseText();
+    
+    var message = "Current aliases:\n";
+    for (let alias of response)
+      message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+
+    bot.sendMessage(msg.from.id, message); 
+  })
 });
 
 // remove alias
 bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var aliasToRemove = match[1];
 
@@ -371,14 +373,18 @@ bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
     }
 
     if (!aliasExists) {
-      bot.sendMessage(user.getId(), "Error: alias " + aliasToRemove + " does not exist");
+      bot.sendMessage(msg.from.id, "Error: alias " + aliasToRemove + " does not exist");
     }
     else {
-      this.database.setUserAliasesFromJSON(user, newAliasJSON)
+      dataB.setUserAliasesFromJSON(user, newAliasJSON)
       .then(() => {
-        this.database.getUserAliases(user)
+        dataB.getUserAliases(user)
         .then((newAliases) => {
-          bot.sendMessage(user.getId(), "New aliases: " + newAliases);
+          var message = "Current aliases:\n";
+          for (let alias of newAliases)
+            message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+            
+          bot.sendMessage(msg.from.id, message);
         })
       })
     }    

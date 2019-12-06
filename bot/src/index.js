@@ -115,6 +115,7 @@ List of commands (use drop down menu as well): \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
+/removeitemalias <name> - I'll get rid of that alias!\n
 /showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
 });
@@ -319,7 +320,44 @@ bot.onText(/\/showaliases (.+)/, function(msg, match) {
 // edit alias
 
 // remove alias
+bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
 
+  var aliasToRemove = match[1];
+
+  dataB.getUserAliases(user)
+  .then((userAliases) => {
+    var newAliasJSON = [];
+    var aliasExists = false;
+
+    for (let alias of userAliases) {
+      if (alias['name'] === aliasToRemove) {
+        aliasExists = true;
+        continue;
+      }
+      else {
+        newAliasJSON.push({
+          'name' : alias['name'], 
+          'link' : alias['link']
+        });
+      }
+    }
+
+    if (!aliasExists) {
+      bot.sendMessage(user.getId(), "Error: alias " + aliasToRemove + " does not exist");
+    }
+    else {
+      this.database.setUserAliasesFromJSON(user, newAliasJSON)
+      .then(() => {
+        this.database.getUserAliases(user)
+        .then((newAliases) => {
+          bot.sendMessage(user.getId(), "New aliases: " + newAliases);
+        })
+      })
+    }    
+  })
+});
 
 //build list 0 for coms 1 for groceries
 //const build_list => (listo, decider)

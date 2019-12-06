@@ -128,6 +128,32 @@ describe('Database Adapter tests', function() {
 		assert.equal(propagatedAliases[1]['name'], 'pear');
 	});
 
+	it('test serCartAliasesFromJSON', async function() {
+		const userAliasesJSON = {
+			'name' : 'weeklyFruit',
+			'items' : [
+				{
+					'link': 'amazon.com/apple',
+					'quantity': 3
+				}, 
+				{
+					'link': 'amazon.com/pear',
+					'quantity': 3
+				}
+			]
+		};
+
+		customer.setId("mdc");
+		var result = await databaseAdapter.setCartAliasesFromJSON(customer, userAliasesJSON);		
+		var propagatedAliases = await databaseAdapter.getCartAliases(customer);
+		
+		assert.equal(propagatedAliases[0]['name'], 'weeklyFruit');
+		assert.equal(propagatedAliases[0]['items'][0]['link'], 'amazon.com/apple');
+		assert.equal(propagatedAliases[0]['items'][0]['quantity'], 3);
+		assert.equal(propagatedAliases[0]['items'][1]['link'], 'amazon.com/pear');
+		assert.equal(propagatedAliases[0]['items'][1]['quantity'], 3);
+	});
+
 	it('test getUserItems', async function() {
 		const userItems = await databaseAdapter.getUserItems(customer);
 		assert.isOk(userItems);

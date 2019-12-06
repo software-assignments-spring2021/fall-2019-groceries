@@ -56,10 +56,64 @@ class RequestProcessor {
 				var newAliasJSON = [];
 				for (let alias of userAliases) {
 					if (alias['name'] === aliasName) {
-						userResponse.setResponseText("Alias " + aliasName  
-							 + " is already defined");
+						continue;
+					}
+					else {
+						newAliasJSON.push({
+							'name' : alias['name'], 
+							'link' : alias['link']
+						});
+					}
+				}
+
+				newAliasJSON.push({'name': aliasName, 'link': aliasLink});
+
+				this.database.setUserAliasesFromJSON(user, newAliasJSON)
+				.then(() => {
+					this.database.getUserAliases(user)
+					.then((newAliases) => {
+						userResponse.setResponseText(newAliases);
 						this.bot.onAddUserAliasResponse(userResponse);
 						return resolve();
+					})
+				})
+			})
+		});
+	}
+
+	onSetUserAliasRequest(request) {
+		var userResponse = new AddUserAliasResponse();
+		const user = request.getUser();
+		userResponse.setUser(user);
+
+		if (user === null) {
+			userResponse.setResponseText("User is not defined");
+			this.bot.onAddUserAliasResponse(userResponse);
+			return;
+		}
+
+		const aliasName = request.getAliasName();
+		const aliasLink = request.getAliasLink();
+
+		if (aliasName === null) {
+			userResponse.setResponseText("Alias item is not defined");
+			this.bot.onAddUserAliasResponse(userResponse);
+			return;
+		}
+
+		if (aliasLink === null) {
+			userResponse.setResponseText("Alias link is not defined");
+			this.bot.onAddUserAliasResponse(userResponse);
+			return;
+		}
+
+		return new Promise((resolve, reject) => {
+			this.database.getUserAliases(user)
+			.then((userAliases) => {
+				var newAliasJSON = [];
+				for (let alias of userAliases) {
+					if (alias['name'] === aliasName) {
+						continue;
 					}
 					else {
 						newAliasJSON.push({

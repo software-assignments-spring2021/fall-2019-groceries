@@ -384,7 +384,7 @@ bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
           for (let alias of newAliases)
             message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
             
-          bot.sendMessage(msg.from.id, "New aliases: " + message);
+          bot.sendMessage(msg.from.id, message);
         })
       })
     }    

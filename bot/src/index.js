@@ -297,27 +297,33 @@ var requestProcessor = new RequestProcessor();
 requestProcessor.setBot(botShim);
 requestProcessor.setDatabase(new DatabaseAdapter());
 
-// add alias
-
 // display aliases
-bot.onText(/\/showaliases (.+)/, function(msg, match) {
+bot.onText(/\/showaliases/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var request = new DisplayUserAliasesRequest();
   request.setUser(user);
   
   requestProcessor.onDisplayUserAliasesRequest(request)
-  .then(() => {
-    var response = botShim.getLastResponse().getResponseText(); 
-    bot.sendMessage(user.getId(), "Current aliases:\n" + response);
-  })  
+  botShim.getLastResponse().getResponseText().then((response) => {
+    if (response.includes("Error")) {
+      message = "Error: No aliases defined for user " + user.getId();
+    }
+    else {
+      var message = "Current aliases:\n";
+      for (let alias of response)
+        message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+    }
+
+    bot.sendMessage(msg.from.id, message);
+  })
 });
 
 // set item alias
 bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var inputArray = parse_entry(match[1]);
 
@@ -330,17 +336,21 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   request.setAliasName(inputArray[0]);
   request.setAliasLink(inputArray[1]);
   
-  requestProcessor.onAddUserAliasRequest(request)
-  .then(() => {
-    var response = botShim.getLastResponse().getResponseText(); 
-    bot.sendMessage(user.getId(), "Current aliases:\n" + response);
-  })  
+  requestProcessor.onAddUserAliasRequest(request).then(() => {
+    var response = botShim.getLastResponse().getResponseText();
+    
+    var message = "Current aliases:\n";
+    for (let alias of response)
+      message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+
+    bot.sendMessage(msg.from.id, message); 
+  })
 });
 
 // remove alias
 bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var aliasToRemove = match[1];
 
@@ -363,14 +373,18 @@ bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
     }
 
     if (!aliasExists) {
-      bot.sendMessage(user.getId(), "Error: alias " + aliasToRemove + " does not exist");
+      bot.sendMessage(msg.from.id, "Error: alias " + aliasToRemove + " does not exist");
     }
     else {
-      this.database.setUserAliasesFromJSON(user, newAliasJSON)
+      dataB.setUserAliasesFromJSON(user, newAliasJSON)
       .then(() => {
-        this.database.getUserAliases(user)
+        dataB.getUserAliases(user)
         .then((newAliases) => {
-          bot.sendMessage(user.getId(), "New aliases: " + newAliases);
+          var message = "Current aliases:\n";
+          for (let alias of newAliases)
+            message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+            
+          bot.sendMessage(msg.from.id, "New aliases: " + message);
         })
       })
     }    

@@ -78,31 +78,28 @@ classes that were made in the inception of the project to the current implementa
 function UserAdapter(userEntry) {
   let user = new Customer();
   let address = new Address();
-
    
    address.setAddressLine1(userEntry.address);
    address.setAddressLine2(userEntry.address);
    address.setCity(userEntry.address);
    address.setCountry(userEntry.address);
-   address.setFirstName(userEntry.name);
-   address.setLastName(userEntry.name);
+   address.setFirstName(userEntry.username);
+   address.setLastName(userEntry.username);
 
    address.setPhoneNumber(userEntry.number);
    address.setState(userEntry.address);
    address.setZipCode(userEntry.address);
 
    user.setAddress(address);
-   user.setId(userEntry.name);
-   user.setName(userEntry.name);
-   user.setUsername(userEntry.name);
+   user.setId(userEntry.username);
+   user.setName(userEntry.username);
+   user.setUsername(userEntry.username);
 
    user.setPassword(userEntry.password);
-   user.setCart(userEntry.name);
+   user.setCart(userEntry.username);
 
   return user;
 }
-
-
 
 bot.onText(/\/start/, function (msg, match) {
   var fromId = msg.from.id;
@@ -159,16 +156,11 @@ bot.onText(/\/setaddress (.+)/, function (msg, match) {
   var response = `Address set! Your cart has been created`;
 
   var userData = UserAdapter(userEntry);
-
-  
-  //TODO: check if async can be avoided
-  var resp = async function(){
-    var resp = await dataB.addUser(userData);
-  }
-  resp();
-  bot.sendMessage(fromId, response);
+ 
+  dataB.addUser(userData).then(() => {
+    bot.sendMessage(fromId, response);
+  })  
 });
-
 
 //function contains method to return the user data or any data from the database
 bot.onText(/\/displayuser (.+)/, function (msg, match) {

@@ -316,6 +316,22 @@ bot.onText(/\/showaliases (.+)/, function(msg, match) {
   })  
 });
 
+// view cart
+bot.onText(/\/viewcart (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
+
+  var request = new DisplayUserCartRequest;
+  request.setUser(user);
+  
+  requestProcessor.onDisplayUserCartRequest(request)
+  .then(() => {
+    var response = botShim.getLastResponse().getResponseText(); 
+    bot.sendMessage(user.getId(), response);
+  })  
+});
+
+
 // edit alias
 
 // remove alias

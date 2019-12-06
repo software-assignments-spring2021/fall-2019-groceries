@@ -5,6 +5,7 @@ const {Address} = require("../../src/address");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
 const {AddUserAliasRequest, DisplayUserAliasesRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
+const {IBot} = require("./ibot");
 const {Item} = require("../../src/item");
 const {Cart, CartItem} = require("../../src/cart");
 
@@ -13,7 +14,7 @@ process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk"
+const token = "708748902:AAGT1RDR1Ovs5h8wCke_BrMstzpiGgYKCbA"
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -27,7 +28,7 @@ var userInfoArray = [null,null,null];
 var searchUser =  new Customer();
 var userItem = new Item();
 var userCart = new Cart();
-var userEntry = new UserEntry();
+
 
 
 class UserEntry{
@@ -55,6 +56,9 @@ class UserEntry{
   }
 
 }
+
+var userEntry = new UserEntry();
+
 //var userCartItem = new CartItem();
 
 
@@ -115,6 +119,7 @@ List of commands (use drop down menu as well): \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
+/removeitemalias <name> - I'll get rid of that alias!\n
 /setitemalias <name> <link> - I'll add an alias for <link> \n
 /showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
@@ -341,6 +346,44 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
 });
 
 // remove alias
+bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
+
+  var aliasToRemove = match[1];
+
+  dataB.getUserAliases(user)
+  .then((userAliases) => {
+    var newAliasJSON = [];
+    var aliasExists = false;
+
+    for (let alias of userAliases) {
+      if (alias['name'] === aliasToRemove) {
+        aliasExists = true;
+        continue;
+      }
+      else {
+        newAliasJSON.push({
+          'name' : alias['name'], 
+          'link' : alias['link']
+        });
+      }
+    }
+
+    if (!aliasExists) {
+      bot.sendMessage(user.getId(), "Error: alias " + aliasToRemove + " does not exist");
+    }
+    else {
+      this.database.setUserAliasesFromJSON(user, newAliasJSON)
+      .then(() => {
+        this.database.getUserAliases(user)
+        .then((newAliases) => {
+          bot.sendMessage(user.getId(), "New aliases: " + newAliases);
+        })
+      })
+    }    
+  })
+});
 
 //build list 0 for coms 1 for groceries
 //const build_list => (listo, decider)

@@ -32,3 +32,5 @@ class IBot {
 		return true;
 	}
 }
+
+module.exports = {IBot};

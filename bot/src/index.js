@@ -5,6 +5,7 @@ const {Address} = require("../../src/address");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
 const {AddUserAliasRequest, DisplayUserAliasesRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
+const {IBot} = require("./ibot");
 const {Item} = require("../../src/item");
 const {Cart, CartItem} = require("../../src/cart");
 
@@ -13,7 +14,7 @@ process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk"
+const token = "708748902:AAGT1RDR1Ovs5h8wCke_BrMstzpiGgYKCbA"
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -27,7 +28,7 @@ var userInfoArray = [null,null,null];
 var searchUser =  new Customer();
 var userItem = new Item();
 var userCart = new Cart();
-var userEntry = new UserEntry();
+
 
 
 class UserEntry{
@@ -55,6 +56,9 @@ class UserEntry{
   }
 
 }
+
+var userEntry = new UserEntry();
+
 //var userCartItem = new CartItem();
 
 

@@ -3,7 +3,7 @@ const Search = require("../../productSearch/productSearch");
 const {Customer} = require("../../src/customer");
 const {Address} = require("../../src/address");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
-const {DisplayProductSearchRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
+const {AddUserAliasRequest, DisplayUserAliasesRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
 const {Item} = require("../../src/item");
 const {Cart, CartItem} = require("../../src/cart");
@@ -116,6 +116,7 @@ List of commands (use drop down menu as well): \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
 /removeitemalias <name> - I'll get rid of that alias!\n
+/setitemalias <name> <link> - I'll add an alias for <link> \n
 /showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
 });
@@ -313,11 +314,32 @@ bot.onText(/\/showaliases (.+)/, function(msg, match) {
   requestProcessor.onDisplayUserAliasesRequest(request)
   .then(() => {
     var response = botShim.getLastResponse().getResponseText(); 
-    bot.sendMessage(user.getId(), response);
+    bot.sendMessage(user.getId(), "Current aliases:\n" + response);
   })  
 });
 
-// edit alias
+// set item alias
+bot.onText(/\/setitemalias (.+)/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.id);
+
+  var inputArray = parse_entry(match[1]);
+
+  if (inputArray.length < 2) {
+    bot.sendMessage(user.getId(), "Error: Invalid use of /setitemalias" + quantity);
+  }
+
+  var request = new AddUserAliasRequest();
+  request.setUser(user);
+  request.setAliasName(inputArray[0]);
+  request.setAliasLink(inputArray[1]);
+  
+  requestProcessor.onAddUserAliasRequest(request)
+  .then(() => {
+    var response = botShim.getLastResponse().getResponseText(); 
+    bot.sendMessage(user.getId(), "Current aliases:\n" + response);
+  })  
+});
 
 // remove alias
 bot.onText(/\/removeitemalias (.+)/, function(msg, match) {

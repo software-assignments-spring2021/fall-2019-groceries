@@ -491,7 +491,7 @@ bot.onText(/\/setcartalias (.+)/, function(msg, match){
     // get the user's cart
     dataB.getUserCart(user)
     .then((cartJSON) => {
-      if (cartJSON.length > 0) {
+      if (cartJSON.length > 0 && !cartJSON.includes("Error")) {
         // get links from alias names in cart
         dataB.getUserAliases(user)
         .then((itemAliases) => {

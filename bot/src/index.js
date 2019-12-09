@@ -621,11 +621,11 @@ bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
 });
 
 // view cart
-bot.onText(/\/viewcart (.+)/, function(msg, match) {
+bot.onText(/\/viewcart/, function(msg, match) {
   var user = new Customer();
   user.setId(msg.from.username);
 
-  var request = new DisplayUserCartRequest;
+  var request = new DisplayUserCartRequest();
   request.setUser(user);
   
   requestProcessor.onDisplayUserCartRequest(request)
@@ -641,10 +641,6 @@ bot.onText(/\/viewcart (.+)/, function(msg, match) {
     }
     bot.sendMessage(msg.from.id, message);
   })
-  .then(() => {
-    var response = botShim.getLastResponse().getResponseText(); 
-    bot.sendMessage(user.getId(), response);
-  })  
 });
 
 //build list 0 for coms 1 for groceries

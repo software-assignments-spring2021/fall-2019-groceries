@@ -16,7 +16,7 @@ process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAGT1RDR1Ovs5h8wCke_BrMstzpiGgYKCbA"
+const token = "708748902:AAF5F1xANfGlvcuM3lIr4bmJcqb2OXUU9A8"
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -120,6 +120,7 @@ List of commands (use drop down menu as well): \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
 /removeitemalias <name> - I'll get rid of that alias!\n
+/setcartalias <name> - I'll alias your current cart\n
 /setitemalias <name> <link> - I'll add an alias for <link> \n
 /showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
@@ -475,6 +476,78 @@ bot.onText(/\/showaliases/, function(msg, match) {
   })
 });
 
+bot.onText(/\/setcartalias (.+)/, function(msg, match){
+  var user = new Customer();
+  user.setId(msg.from.user);
+
+  var inputArray = parse_entry(match[1]);
+
+  if (inputArray.length < 1) {
+    bot.sendMessage(msg.from.id, "Error: Please supply an alias name");
+  }
+  else {
+    const cartAliasName = inputArray[0];
+
+    // get the user's cart
+    dataB.getUserCart(user)
+    .then((cartJSON) => {
+      if (cartJSON.length > 0) {
+        // get links from alias names in cart
+        dataB.getUserAliases(user)
+        .then((itemAliases) => {
+          for (let itemAlias of itemAliases) {
+            for (let cartItem of cartJSON) {
+              if (cartItem['name'] == itemAlias['name'])
+                cartItem['link'] = itemAlias['link'];
+            }
+          }
+        })
+        .then(() => {
+          dataB.getCartAliases(user)
+          .then((cartAliases) => {
+            var cartAliasFound = false;
+            for (let cartAlias of cartAliases) {
+              if (cartAlias['name'] === cartAliasName) {
+                cartAliasFound = true;
+                cartAlias['items'] = cartJSON;
+                cartAlias['items']
+                break;
+              }
+            }
+
+            if (!cartAliasFound) {
+              cartAliases.push({
+                'name': cartAliasName, 
+                'items': cartJSON
+              });
+            }
+
+            dataB.setCartAliasesFromJSON(user, cartAliases)
+            .then(() => {
+              dataB.getCartAliases(user)
+              .then((propagatedCartAliases) => {
+                var cartAliasesStr = "";
+                for (let cartAlias of propagatedCartAliases) {
+                  cartAliasesStr += cartAlias['name'] + ":\n";
+                  for (let item of cartAlias['items']) {
+                    cartAliasesStr += "\t\t\t(" + item['quantity'] + ") " + item['link'] + "\n";
+                  }
+                }
+                
+                bot.sendMessage(msg.from.id, "New cart aliases:\n" + cartAliasesStr);
+              })
+            })
+          })  
+        });
+      } 
+      else {
+        bot.sendMessage(msg.from.id, 
+          "Your cart is empty! Add some items, then we can make you an alias!");
+      }     
+    })  
+  }
+})
+
 // set item alias
 bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   var user = new Customer();
@@ -485,21 +558,22 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   if (inputArray.length < 2) {
     bot.sendMessage(user.getId(), "Error: Invalid use of /setitemalias" + quantity);
   }
-
-  var request = new AddUserAliasRequest();
-  request.setUser(user);
-  request.setAliasName(inputArray[0]);
-  request.setAliasLink(inputArray[1]);
-  
-  requestProcessor.onAddUserAliasRequest(request).then(() => {
-    var response = botShim.getLastResponse().getResponseText();
+  else {
+    var request = new AddUserAliasRequest();
+    request.setUser(user);
+    request.setAliasName(inputArray[0]);
+    request.setAliasLink(inputArray[1]);
     
-    var message = "Current aliases:\n";
-    for (let alias of response)
-      message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
-
-    bot.sendMessage(msg.from.id, message); 
-  })
+    requestProcessor.onAddUserAliasRequest(request).then(() => {
+      var response = botShim.getLastResponse().getResponseText();
+      
+      var message = "Current aliases:\n";
+      for (let alias of response)
+        message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+  
+      bot.sendMessage(msg.from.id, message); 
+    })
+  }
 });
 
 // remove alias

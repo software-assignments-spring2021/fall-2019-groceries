@@ -396,12 +396,24 @@ bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
 // view cart
 bot.onText(/\/viewcart (.+)/, function(msg, match) {
   var user = new Customer();
-  user.setId(msg.from.id);
+  user.setId(msg.from.username);
 
   var request = new DisplayUserCartRequest;
   request.setUser(user);
   
   requestProcessor.onDisplayUserCartRequest(request)
+  botShim.getLastResponse().getResponseText().then((response) => {
+    if (response.includes("Error")) {
+      message = "Error: No cart defined for user";
+    }
+    else {
+      var message = "Current cart:\n";
+      for (let item of response) {
+        message += "\t\t" + item['quantity'] + item['name'] + "\n";
+      }
+    }
+    bot.sendMessage(msg.from.id, message);
+  })
   .then(() => {
     var response = botShim.getLastResponse().getResponseText(); 
     bot.sendMessage(user.getId(), response);

@@ -65,7 +65,6 @@ class DatabaseAdapter {
 	async getCartAliases(user) {
 		const endpoint = this.baseEndpoint + 'cartAliases/' + user.getId();
 		var cartAliasesJSON = await this.sendGetRequest(endpoint);
-		console.log(cartAliasesJSON);
 		cartAliasesJSON = JSON.parse("[" + cartAliasesJSON  + "]")[0];
 		return cartAliasesJSON;
 	}

@@ -296,13 +296,13 @@ edit user cart
 bot.onText(/\/search (.+)/, function (msg, match) {
   var fromId = msg.from.id;
 
-  console.log(match[1]);
+  //console.log(match[1]);
 
 
   var searchResults = Search.searchItem(match[1]);
   var resultJSON = JSON.parse(searchResults.responseText);
 
-  console.log(resultJSON);
+  //console.log(resultJSON);
   
   var cost;
   var id;

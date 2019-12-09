@@ -8,13 +8,15 @@ const {RequestProcessor} = require('../../src/requestProcessor');
 const {IBot} = require("./ibot");
 const {Item} = require("../../src/item");
 const {Cart, CartItem} = require("../../src/cart");
+const {Order} = require("../../src/order");
+const productOrder = require("../../productOrder/productOrder.js");
 
 
 process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAGT1RDR1Ovs5h8wCke_BrMstzpiGgYKCbA"
+const token = "708748902:AAF5F1xANfGlvcuM3lIr4bmJcqb2OXUU9A8"
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -29,7 +31,8 @@ var searchUser =  new Customer();
 var userItem = new Item();
 var userCart = new Cart();
 
-
+//testing
+var testUser = new Customer();
 
 class UserEntry{
   constructor(){
@@ -117,6 +120,7 @@ List of commands (use drop down menu as well): \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
 /removeitemalias <name> - I'll get rid of that alias!\n
+/setcartalias <name> - I'll alias your current cart\n
 /setitemalias <name> <link> - I'll add an alias for <link> \n
 /showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
@@ -208,6 +212,20 @@ bot.onText(/\/add (.+)/, function (msg, match) {
 
     //TODO: Check for alias
     if ((array.length > 1 ) && (array.length < 3)) {
+      
+      
+      var testCart = new Cart();
+      var item = new Item();
+      
+      item.setId("B07RSSPBGJ");
+      item.setName("Banana");
+      testCart.addItem(item,quantity);
+
+      testUser.setCart(testCart);
+
+     
+      
+      
       // var searchResults = Search.
       // var result = search.searchItem("banana");
 
@@ -236,15 +254,21 @@ bot.onText(/\/add (.+)/, function (msg, match) {
           }
 
         } else {
-          priceString = priceString.slice(-2)+"."+priceString.slice((priceString.length-2));
+
+          var integer = parseInt(priceString, 10); 
+
+          integer /= 100;
+  
+          priceString = integer;
+
         }
         subString = subString + "Price: " + "$" + priceString + "\n";
         subString = subString + resultJSON["results"][index]["image"] + "\n\n";
-        pickItem = pickItem + subString;
+        
         
       }
       pickItem = pickItem + subString;
-      subString = "";
+      
 
       bot.sendMessage(fromId, pickItem);
     } 
@@ -269,6 +293,138 @@ edit user cart
 
 -
 */
+
+bot.onText(/\/search (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+
+  //console.log(match[1]);
+
+
+  var searchResults = Search.searchItem(match[1]);
+  var resultJSON = JSON.parse(searchResults.responseText);
+
+  //console.log(resultJSON);
+  
+  var cost;
+  var id;
+  var name;
+  var imageLink;
+  var subString = "";
+  var priceString = "";
+  
+  var pickItem = "Here are the top 5 picks for you.\n";
+  
+  for (let index = 0; index < 5; index++) {
+  
+    subString = subString + (index+1).toString()+`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
+  
+    priceString = (resultJSON["results"][index]["price"]).toString();
+
+    console.log(priceString);
+   
+    if (priceString.length < 3) {
+  
+      if (priceString.length < 2) {
+  
+        priceString = "0.0"+priceString;
+  
+      }else{
+  
+        priceString = "0."+priceString;
+  
+      }
+
+
+    } else {
+    
+      var integer = parseInt(priceString, 10); 
+
+      integer /= 100;
+      
+      priceString = integer;
+    
+    }
+    
+    subString = subString + "Price: " + "$" + priceString + "\n";
+    subString = subString + resultJSON["results"][index]["image"] + "\n\n";
+    
+   
+  }
+  
+  pickItem = pickItem + subString;
+ 
+  bot.sendMessage(fromId, pickItem);
+
+});
+
+
+//product ordering
+bot.onText(/\/order/, function (msg) {
+  
+  var fromId = msg.from.id;
+
+  //show the user the current cart, if he confirms, then I will create an ordering object and set everything. 
+  //if not then just return
+  
+
+  if(testUser.getCart() == null || testUser.getCart().size() < 1){
+
+    var finalMessage = "You currently have no items in your cart.";  
+    bot.sendMessage(fromId, finalMessage);
+
+  }
+
+  else{
+
+    var messagePart1 = "This is your current cart. \n\n";
+    var itemsInCartMessage = "";
+    var messagePart3 = "\n\nAre you sure you want to place this order? Type in either yes or no"
+
+    var i = 1;
+      
+    for (let cartItem of testUser.getCart().getItems().values()) {
+
+      itemsInCartMessage = itemsInCartMessage + i + '):\nProduct Name: '+cartItem.getItem().getName()+'\nProduct ID: ' + cartItem.getItem().getId()+'\nQuantity: '+cartItem.getQuantity()+'\n';
+  
+    }
+    
+    var finalMessage = messagePart1 + itemsInCartMessage + messagePart3;  
+    bot.sendMessage(fromId, finalMessage);
+
+    
+
+    bot.onText(/\/yes/, function (msg, type) {
+      
+      var fromId = msg.from.id;
+
+    //here we make the order object to be able to order the items in the cart
+      var order = new order();
+
+      //need to get this all from the database
+      order.setBillingAddress(validAddress);
+      order.setCustomer(customer);
+      order.setShippingAddress(validAddress);
+      order.setIsGift(false);
+      order.setMaxPrice(1); 
+      order.setPaymentMethod(paymentMethod);
+    
+      
+      bot.sendMessage(fromId, yes);
+    
+    
+      
+    });
+
+  }
+  
+   
+  
+});
+
+
+
+
+
 
 //parent command for cart interaction
 bot.onText(/\/editcart (.+)/, function (msg, match) {
@@ -320,8 +476,78 @@ bot.onText(/\/showaliases/, function(msg, match) {
   })
 });
 
+bot.onText(/\/setcartalias (.+)/, function(msg, match){
+  var user = new Customer();
+  user.setId(msg.from.user);
 
-// edit alias
+  var inputArray = parse_entry(match[1]);
+
+  if (inputArray.length < 1) {
+    bot.sendMessage(msg.from.id, "Error: Please supply an alias name");
+  }
+  else {
+    const cartAliasName = inputArray[0];
+
+    // get the user's cart
+    dataB.getUserCart(user)
+    .then((cartJSON) => {
+      if (cartJSON.length > 0) {
+        // get links from alias names in cart
+        dataB.getUserAliases(user)
+        .then((itemAliases) => {
+          for (let itemAlias of itemAliases) {
+            for (let cartItem of cartJSON) {
+              if (cartItem['name'] == itemAlias['name'])
+                cartItem['link'] = itemAlias['link'];
+            }
+          }
+        })
+        .then(() => {
+          dataB.getCartAliases(user)
+          .then((cartAliases) => {
+            var cartAliasFound = false;
+            for (let cartAlias of cartAliases) {
+              if (cartAlias['name'] === cartAliasName) {
+                cartAliasFound = true;
+                cartAlias['items'] = cartJSON;
+                cartAlias['items']
+                break;
+              }
+            }
+
+            if (!cartAliasFound) {
+              cartAliases.push({
+                'name': cartAliasName, 
+                'items': cartJSON
+              });
+            }
+
+            dataB.setCartAliasesFromJSON(user, cartAliases)
+            .then(() => {
+              dataB.getCartAliases(user)
+              .then((propagatedCartAliases) => {
+                var cartAliasesStr = "";
+                for (let cartAlias of propagatedCartAliases) {
+                  cartAliasesStr += cartAlias['name'] + ":\n";
+                  for (let item of cartAlias['items']) {
+                    cartAliasesStr += "\t\t\t(" + item['quantity'] + ") " + item['link'] + "\n";
+                  }
+                }
+                
+                bot.sendMessage(msg.from.id, "New cart aliases:\n" + cartAliasesStr);
+              })
+            })
+          })  
+        });
+      } 
+      else {
+        bot.sendMessage(msg.from.id, 
+          "Your cart is empty! Add some items, then we can make you an alias!");
+      }     
+    })  
+  }
+})
+
 // set item alias
 bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   var user = new Customer();
@@ -332,21 +558,22 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   if (inputArray.length < 2) {
     bot.sendMessage(user.getId(), "Error: Invalid use of /setitemalias" + quantity);
   }
-
-  var request = new AddUserAliasRequest();
-  request.setUser(user);
-  request.setAliasName(inputArray[0]);
-  request.setAliasLink(inputArray[1]);
-  
-  requestProcessor.onAddUserAliasRequest(request).then(() => {
-    var response = botShim.getLastResponse().getResponseText();
+  else {
+    var request = new AddUserAliasRequest();
+    request.setUser(user);
+    request.setAliasName(inputArray[0]);
+    request.setAliasLink(inputArray[1]);
     
-    var message = "Current aliases:\n";
-    for (let alias of response)
-      message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
-
-    bot.sendMessage(msg.from.id, message); 
-  })
+    requestProcessor.onAddUserAliasRequest(request).then(() => {
+      var response = botShim.getLastResponse().getResponseText();
+      
+      var message = "Current aliases:\n";
+      for (let alias of response)
+        message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+  
+      bot.sendMessage(msg.from.id, message); 
+    })
+  }
 });
 
 // remove alias

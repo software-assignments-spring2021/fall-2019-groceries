@@ -409,7 +409,7 @@ bot.onText(/\/viewcart (.+)/, function(msg, match) {
     else {
       var message = "Current cart:\n";
       for (let item of response) {
-        message += "\t\t" + item['quantity'] + item['name'] + "\n";
+        message += "\t\t" + item['quantity'] + " " + item['name'] + "\n";
       }
     }
     bot.sendMessage(msg.from.id, message);

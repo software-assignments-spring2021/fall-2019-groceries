@@ -3,7 +3,7 @@ const Search = require("../../productSearch/productSearch");
 const {Customer} = require("../../src/customer");
 const {Address} = require("../../src/address");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
-const {AddUserAliasRequest, DisplayUserAliasesRequest} = require("../../src/userRequests");
+const {AddUserAliasRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
 const {IBot} = require("./ibot");
 const {Item} = require("../../src/item");
@@ -682,10 +682,11 @@ bot.onText(/\/viewcart/, function(msg, match) {
   var request = new DisplayUserCartRequest();
   request.setUser(user);
   
-  requestProcessor.onDisplayUserCartRequest(request)
-  botShim.getLastResponse().getResponseText().then((response) => {
+  requestProcessor.onDisplayUserCartRequest(request)  
+  botShim.getLastResponse().getResponseText()
+  .then((response) => {
     if (response.includes("Error")) {
-      message = "Error: No cart defined for user";
+      var message = "Error: No cart defined for user";
     }
     else {
       var message = "Current cart:\n";

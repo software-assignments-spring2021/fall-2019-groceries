@@ -620,6 +620,29 @@ bot.onText(/\/removeitemalias (.+)/, function(msg, match) {
   })
 });
 
+// view cart
+bot.onText(/\/viewcart/, function(msg, match) {
+  var user = new Customer();
+  user.setId(msg.from.username);
+
+  var request = new DisplayUserCartRequest();
+  request.setUser(user);
+  
+  requestProcessor.onDisplayUserCartRequest(request)
+  botShim.getLastResponse().getResponseText().then((response) => {
+    if (response.includes("Error")) {
+      message = "Error: No cart defined for user";
+    }
+    else {
+      var message = "Current cart:\n";
+      for (let item of response) {
+        message += "\t\t" + item['quantity'] + " " + item['name'] + "\n";
+      }
+    }
+    bot.sendMessage(msg.from.id, message);
+  })
+});
+
 //build list 0 for coms 1 for groceries
 //const build_list => (listo, decider)
 function build_list(list, decider){

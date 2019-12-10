@@ -119,9 +119,10 @@ List of commands (use drop down menu as well): \n
 /cart <your ID> - I'll create the virtual cart for you (food comes in bits) \n
 /add <number> <item> - I'll add an item in your cart \n
 /search <item> - I'll help you to find an item \n 
-/removeitemalias <name> - I'll get rid of that alias!\n
+/setitemalias <name> <link> - I'll add an alias for <link>\n
 /setcartalias <name> - I'll alias your current cart\n
-/setitemalias <name> <link> - I'll add an alias for <link> \n
+/removeitemalias <name> - I'll get rid of that item alias!\n
+/removecartalias <name> - I'll get rid of that cart alias!\n
 /showaliases - I'll show you your aliases \n`;
   bot.sendMessage(fromId, response);
 });
@@ -476,9 +477,55 @@ bot.onText(/\/showaliases/, function(msg, match) {
   })
 });
 
+bot.onText(/\/removecartalias (.+)/, function(msg, match) { 
+  var user = new Customer();
+  user.setId(msg.from.username);
+
+  var inputArray = parse_entry(match[1]);
+
+  if (inputArray.length < 1) {
+    bot.sendMessage(msg.from.id, "Error: Please supply an alias name");
+  }
+  else {
+    const cartAliasName = inputArray[0];
+
+    dataB.getCartAliases(user)
+    .then((cartAliases) => {
+      var newCartAliases = [];
+
+      // add each alias not equal to the one we're trying to remove
+      var matchFound = false;
+      for (let cartAlias of cartAliases) {
+        if (cartAlias['name'] === cartAliasName) {
+          matchFound = true;
+          continue; 
+        }
+
+        newCartAliases.push(cartAlias);
+      }
+
+      dataB.setCartAliasesFromJSON(user, newCartAliases)
+      .then(() => {
+        dataB.getCartAliases(user)
+        .then((propagatedCartAliases) => {
+          var cartAliasesStr = "";
+          for (let cartAlias of propagatedCartAliases) {
+            cartAliasesStr += cartAlias['name'] + ":\n";
+            for (let item of cartAlias['items']) {
+              cartAliasesStr += "\t\t\t(" + item['quantity'] + ") " + item['link'] + "\n";
+            }
+          }
+          
+          bot.sendMessage(msg.from.id, "New cart aliases:\n" + cartAliasesStr);  
+        })
+      })  
+    })
+  }
+});
+
 bot.onText(/\/setcartalias (.+)/, function(msg, match){
   var user = new Customer();
-  user.setId(msg.from.user);
+  user.setId(msg.from.username);
 
   var inputArray = parse_entry(match[1]);
 
@@ -564,7 +611,8 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
     request.setAliasName(inputArray[0]);
     request.setAliasLink(inputArray[1]);
     
-    requestProcessor.onAddUserAliasRequest(request).then(() => {
+    requestProcessor.onAddUserAliasRequest(request)
+    .then(() => {
       var response = botShim.getLastResponse().getResponseText();
       var message;
 

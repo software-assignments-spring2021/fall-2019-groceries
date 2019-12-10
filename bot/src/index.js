@@ -556,7 +556,7 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
   var inputArray = parse_entry(match[1]);
 
   if (inputArray.length < 2) {
-    bot.sendMessage(user.getId(), "Error: Invalid use of /setitemalias" + quantity);
+    bot.sendMessage(msg.from.id, "Error: Invalid use of /setitemalias" + quantity);
   }
   else {
     var request = new AddUserAliasRequest();
@@ -566,10 +566,16 @@ bot.onText(/\/setitemalias (.+)/, function(msg, match) {
     
     requestProcessor.onAddUserAliasRequest(request).then(() => {
       var response = botShim.getLastResponse().getResponseText();
-      
-      var message = "Current aliases:\n";
-      for (let alias of response)
-        message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+      var message;
+
+      if (response.includes("Error")) {
+        message = "Error: you need to make a cart first!";
+      }
+      else {
+        message = "Current aliases:\n";
+        for (let alias of response)
+          message += "\t\t" + alias['name'] + ":\t" + alias['link'] + "\n";
+      }
   
       bot.sendMessage(msg.from.id, message); 
     })

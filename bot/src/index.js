@@ -10,6 +10,7 @@ const {Item} = require("../../src/item");
 const {Cart, CartItem} = require("../../src/cart");
 const {Order} = require("../../src/order");
 const productOrder = require("../../productOrder/productOrder.js");
+const {OrderStatusRetriever} = require("../../src/orderStatusRetriever");
 
 
 process.env["NTBA_FIX_319"] = 1
@@ -672,6 +673,35 @@ bot.onText(/\/viewcart/, function(msg, match) {
       }
     }
     bot.sendMessage(msg.from.id, message);
+  })
+});
+
+var orderStatusRetriever = new OrderStatusRetriever();
+
+bot.onText(/\/vieworders/, function(msg, match) { 
+  orderStatusRetriever.retrieveOrderStatus()
+  .then((orders) => {
+    var numOrders = 0;
+    for (let order of orders) {
+      if (numOrders > 9)
+        break;
+
+      var orderHistoryString = "Order #" + order['request_id'] + "\nCreated At: " + order['_created_at'] + "\n";
+      for (let product of order['request']['products']) {
+        orderHistoryString += "\t\t\tQuantity: " + product['quantity'] + " Item: ";
+        var productId = product['product_id'];
+        if (productId.length > 10) {
+          productId = productId.substring(1,11);
+        }
+
+        var itemData = orderStatusRetriever.getItemDataSync(productId);
+        orderHistoryString += itemData["title"] + "\n";        
+      }
+
+      numOrders += 1;
+      orderHistoryString += "\n";
+      bot.sendMessage(msg.from.id, orderHistoryString);
+    }    
   })
 });
 

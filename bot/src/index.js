@@ -191,7 +191,6 @@ bot.onText(/\/displayuser (.+)/, function (msg, match) {
 bot.onText(/\/add (.+)/, function (msg, match) {
   var fromId = msg.from.id;
   var array = parse_entry(match[1]);
-
   
   //TODO: if quantity is 0 raise error
   var quantity = parseInt(array[0]);
@@ -199,7 +198,7 @@ bot.onText(/\/add (.+)/, function (msg, match) {
     response = "Invalid number of items, please try again: correct way : /add 5 apples"
     bot.sendMessage(fromId, response);   
   }
-  else{
+  else {
     //userItem
 
   // item.setCost(5); -- from search
@@ -209,12 +208,8 @@ bot.onText(/\/add (.+)/, function (msg, match) {
   // cart.addItem(avocado, 2); -- cart command / loop for more than one item 
   //
 
-
-
     //TODO: Check for alias
-    if ((array.length > 1 ) && (array.length < 3)) {
-      
-      
+    if ((array.length > 1 ) && (array.length < 3)) {      
       var testCart = new Cart();
       var item = new Item();
       
@@ -222,10 +217,7 @@ bot.onText(/\/add (.+)/, function (msg, match) {
       item.setName("Banana");
       testCart.addItem(item,quantity);
 
-      testUser.setCart(testCart);
-
-     
-      
+      testUser.setCart(testCart);      
       
       // var searchResults = Search.
       // var result = search.searchItem("banana");
@@ -242,8 +234,16 @@ bot.onText(/\/add (.+)/, function (msg, match) {
       var pickItem = `Here are the top 5 picks for you. 
       \nSelect which one you would like to add: \n`;
       
-      for (let index = 0; index < 5; index++) {
-        subString = subString + (index+1).toString()+`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
+      var matches = 0;
+
+      for (let index = 0; matches < 5; index++) {
+        if (resultJSON["results"][index]["price"] === undefined) {
+          continue;
+        }
+        
+        matches += 1;
+
+        subString = subString + matches + `):` + "\n" + resultJSON["results"][index]["title"] + "\n";
         priceString = (resultJSON["results"][index]["price"]).toString();
         console.log(priceString);
         console.log(typeof(priceString));
@@ -254,23 +254,17 @@ bot.onText(/\/add (.+)/, function (msg, match) {
             priceString = "0."+priceString;
           }
 
-        } else {
-
-          var integer = parseInt(priceString, 10); 
-
-          integer /= 100;
-  
-          priceString = integer;
-
         }
+        else {
+          var integer = parseInt(priceString, 10); 
+          integer /= 100;  
+          priceString = integer;
+        }
+
         subString = subString + "Price: " + "$" + priceString + "\n";
-        subString = subString + resultJSON["results"][index]["image"] + "\n\n";
-        
-        
+        subString = subString + resultJSON["results"][index]["image"] + "\n\n";                
       }
       pickItem = pickItem + subString;
-      
-
       bot.sendMessage(fromId, pickItem);
     } 
     else if (array.length > 2){
@@ -281,7 +275,6 @@ bot.onText(/\/add (.+)/, function (msg, match) {
       response = "Too few keywords entered: correct way : /add 5 apples"
       bot.sendMessage(fromId, response);
     }
-    
   }
 });
 

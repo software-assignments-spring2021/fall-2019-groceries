@@ -122,6 +122,7 @@ List of commands (use drop down menu as well): \n
 /search <item> - I'll help you to find an item \n 
 /viewcart - I'll show you your cart \n
 /vieworders - I'll show you your last 10 orders \n
+/queryorderstatus <id> - I'll give you the status of order #<id> \n
 /setitemalias <name> <link> - I'll add an alias for <link>\n
 /setcartalias <name> - I'll alias your current cart\n
 /removeitemalias <name> - I'll get rid of that item alias!\n
@@ -679,6 +680,23 @@ bot.onText(/\/viewcart/, function(msg, match) {
 });
 
 var orderStatusRetriever = new OrderStatusRetriever();
+
+bot.onText(/\/queryorderstatus (.+)/, function(msg, match) { 
+  if (match.length < 2) {
+    bot.sendMessage(msg.from.id, "Error: please specify an order id to query.");
+  }
+  else {
+    const orderId = match[1];
+    var queryResults = orderStatusRetriever.retrieveOrderStatusSync(orderId);
+    if (queryResults['_type'] == 'error') {
+      bot.sendMessage(msg.from.id, "This order never went through!\nIt failed with reason: " + 
+        queryResults['data']['message']);
+    }
+    else {
+      bot.sendMessage(msg.from.id, queryResults['status_updates']);
+    }
+  }  
+});
 
 bot.onText(/\/vieworders/, function(msg, match) { 
   orderStatusRetriever.retrieveOrderStatus()

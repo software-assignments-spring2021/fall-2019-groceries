@@ -8,6 +8,7 @@ describe('OrderStatusRetriever tests', function() {
     it('Test retrieves orders', function() {
         orderStatusRetriever.retrieveOrderStatus()
         .then((orders) => {
+            console.log(orders);
             // Example usage:
             // for (let order of orders) {
             //     console.log("Order #" + order['request_id'] + "\nCreated At: " + order['_created_at']);
@@ -16,5 +17,12 @@ describe('OrderStatusRetriever tests', function() {
             // }      
             return expect(orders[0]).to.have.property("request_id");      
         })        
-	});
+    });
+    
+    it('Test gets item data', function(){
+        orderStatusRetriever.getItemData('B07XR5TRSZ')
+        .then((itemData) => {
+            return expect(itemData).to.have.property("request_id");    
+        });
+    });
 })

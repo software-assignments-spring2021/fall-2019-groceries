@@ -8,6 +8,7 @@ describe('OrderStatusRetriever tests', function() {
     it('Test retrieves orders', function() {
         orderStatusRetriever.retrieveOrderStatus()
         .then((orders) => {
+            console.log(orders);
             // Example usage:
             // for (let order of orders) {
             //     console.log("Order #" + order['request_id'] + "\nCreated At: " + order['_created_at']);

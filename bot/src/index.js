@@ -688,16 +688,16 @@ bot.onText(/\/vieworders/, function(msg, match) {
       if (numOrders > 9)
         break;
 
-      var orderHistoryString = "Order #" + order['request_id'] + "\nCreated At: " + order['_created_at'] + "\n";
+      var orderHistoryString = "Order #" + order['request_id'] + "\nCreated At: " + order['_created_at'] + "\nItems:\n";
       for (let product of order['request']['products']) {
-        orderHistoryString += "\t\t\tQuantity: " + product['quantity'] + " Item: ";
         var productId = product['product_id'];
         if (productId.length > 10) {
           productId = productId.substring(1,11);
         }
 
         var itemData = orderStatusRetriever.getItemDataSync(productId);
-        orderHistoryString += itemData["title"] + "\n";        
+        orderHistoryString += "\t\t\tName: " + itemData["title"] + "\n";  
+        orderHistoryString += "\t\t\tQuantity: " + product['quantity'] + "\n\n";      
       }
 
       numOrders += 1;

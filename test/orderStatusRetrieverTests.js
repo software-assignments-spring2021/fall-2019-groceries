@@ -16,5 +16,12 @@ describe('OrderStatusRetriever tests', function() {
             // }      
             return expect(orders[0]).to.have.property("request_id");      
         })        
-	});
+    });
+    
+    it('Test gets item data', function(){
+        orderStatusRetriever.getItemData('B07XR5TRSZ')
+        .then((itemData) => {
+            return expect(itemData).to.have.property("title");    
+        });
+    });
 })

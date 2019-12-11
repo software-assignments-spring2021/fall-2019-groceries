@@ -298,13 +298,8 @@ edit user cart
 bot.onText(/\/search (.+)/, function (msg, match) {
   var fromId = msg.from.id;
 
-  //console.log(match[1]);
-
-
   var searchResults = Search.searchItem(match[1]);
   var resultJSON = JSON.parse(searchResults.responseText);
-
-  //console.log(resultJSON);
   
   var cost;
   var id;
@@ -315,47 +310,36 @@ bot.onText(/\/search (.+)/, function (msg, match) {
   
   var pickItem = "Here are the top 5 picks for you.\n";
   
-  for (let index = 0; index < 5; index++) {
-  
-    subString = subString + (index+1).toString()+`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
-  
-    priceString = (resultJSON["results"][index]["price"]).toString();
+  var matches = 0;
+  for (let index = 0; matches < 5; index++) {  
+    if (resultJSON["results"][index]["price"] === undefined) {
+      continue;
+    }
 
-    console.log(priceString);
+    matches += 1;
+    subString = subString + matches +`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
+    priceString = (resultJSON["results"][index]["price"]).toString();
    
     if (priceString.length < 3) {
-  
-      if (priceString.length < 2) {
-  
-        priceString = "0.0"+priceString;
-  
-      }else{
-  
-        priceString = "0."+priceString;
-  
+      if (priceString.length < 2) {  
+        priceString = "0.0" + priceString;  
       }
-
-
-    } else {
-    
+      else {
+        priceString = "0." + priceString;  
+      }
+    } 
+    else {    
       var integer = parseInt(priceString, 10); 
-
-      integer /= 100;
-      
-      priceString = integer;
-    
+      integer /= 100;      
+      priceString = integer;    
     }
-    
+
     subString = subString + "Price: " + "$" + priceString + "\n";
-    subString = subString + resultJSON["results"][index]["image"] + "\n\n";
-    
-   
+    subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
   }
   
-  pickItem = pickItem + subString;
- 
+  pickItem = pickItem + subString; 
   bot.sendMessage(fromId, pickItem);
-
 });
 
 

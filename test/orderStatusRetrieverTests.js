@@ -20,7 +20,7 @@ describe('OrderStatusRetriever tests', function() {
     it('Test gets item data', function(){
         orderStatusRetriever.getItemData('B07XR5TRSZ')
         .then((itemData) => {
-            return expect(itemData).to.have.property("request_id");    
+            return expect(itemData).to.have.property("title");    
         });
     });
 })

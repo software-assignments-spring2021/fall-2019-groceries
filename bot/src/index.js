@@ -2,6 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const Search = require("../../productSearch/productSearch");
 const {Customer} = require("../../src/customer");
 const {Address} = require("../../src/address");
+const {PaymentMethod} = require("../../src/paymentMethod");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
 const {AddUserAliasRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
@@ -32,15 +33,30 @@ var searchUser =  new Customer();
 var userItem = new Item();
 var userCart = new Cart();
 
-//testing
-var testUser = new Customer();
 
 class UserEntry{
   constructor(){
+    this.firstName = null;
+    this.lastName = null;
     this.username = null
     this.password = null
     this.number = null
     this.address = null
+    this.address2 = null
+    this.zipcode = null
+    this.state = null
+    this.country = null
+    this.city = null
+  }
+
+  setFirstName(name){
+
+    this.firstName = name;
+  }
+
+  setLastName(name){
+
+    this.lastName = name;
   }
 
   setUsername(name){
@@ -57,6 +73,25 @@ class UserEntry{
 
   setAddress(address){
     this.address = address
+  }
+
+  setAddress2(address){
+    this.address2 = address
+  }
+
+  setZipcode(zipcode){
+    this.zipcode = zipcode
+  }
+  setState(state){
+    this.state = state
+  }
+  setCountry(country){
+    this.country = country
+
+  }
+  setCity(city){
+
+    this.city = city
   }
 
 }
@@ -84,15 +119,15 @@ function UserAdapter(userEntry) {
   let address = new Address();
    
    address.setAddressLine1(userEntry.address);
-   address.setAddressLine2(userEntry.address);
-   address.setCity(userEntry.address);
-   address.setCountry(userEntry.address);
-   address.setFirstName(userEntry.username);
-   address.setLastName(userEntry.username);
+   address.setAddressLine2(userEntry.address2);
+   address.setCity(userEntry.city);
+   address.setCountry(userEntry.country);
+   address.setFirstName(userEntry.firstName);
+   address.setLastName(userEntry.lastName);
 
    address.setPhoneNumber(userEntry.number);
-   address.setState(userEntry.address);
-   address.setZipCode(userEntry.address);
+   address.setState(userEntry.state);
+   address.setZipCode(userEntry.zipcode);
 
    user.setAddress(address);
    user.setId(userEntry.username);
@@ -155,21 +190,96 @@ bot.onText(/\/setphone (.+)/, function (msg, match) {
   userEntry.setNumber(match[1]);
   var response = `Phone number set!
 
-  Type /setaddress <address> to set your address`;
+  Type /setfirstname <first name> to set your first name`;
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/setfirstname (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setFirstName(match[1]);
+  var response = `First name set!
+
+  Type /setlastname <last name> to set your last name`;
+  bot.sendMessage(fromId, response);
+});
+
+bot.onText(/\/setlastname (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setLastName(match[1]);
+  var response = `Last name set!
+
+  Type /setaddress <address1> to set your address line 1`;
   bot.sendMessage(fromId, response);
 });
 
 bot.onText(/\/setaddress (.+)/, function (msg, match) {
   var fromId = msg.from.id;
   userEntry.setAddress(match[1]);
-  var response = `Address set! Your cart has been created`;
+  var response = `Address line 1 set!
+
+  Type /setaddress2 <address2> to set your address line 2. Type in a space if not applicable`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/setaddress2 (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setAddress2(match[1]);
+  var response = `Address line 2 set!
+
+  Type /setcity <city> to set your city `;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/setcity (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setCity(match[1]);
+  var response = `City set!
+
+  Type /setstate <state> to set your state in abbreviated form`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/setstate (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setState(match[1]);
+  var response = `State set!
+
+  Type /setcountry <country> to set your country in abbreviated form`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/setcountry (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setCountry(match[1]);
+  var response = `Country set!
+
+  Type /setzipcode <zipcode> to set your zipcode`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/setzipcode (.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  userEntry.setZipcode(match[1]);
+  var response = `Zipcode set! Your cart has been created`;
 
   var userData = UserAdapter(userEntry);
  
   dataB.addUser(userData).then(() => {
     bot.sendMessage(fromId, response);
   })  
+
 });
+
 
 //function contains method to return the user data or any data from the database
 bot.onText(/\/displayuser (.+)/, function (msg, match) {
@@ -309,6 +419,7 @@ bot.onText(/\/search (.+)/, function (msg, match) {
   
   var matches = 0;
   for (let index = 0; matches < 5; index++) {  
+    
     if (resultJSON["results"][index]["price"] === undefined) {
       continue;
     }
@@ -345,65 +456,235 @@ bot.onText(/\/order/, function (msg) {
   
   var fromId = msg.from.id;
 
+  user.setId(msg.from.username);
+  
   //show the user the current cart, if he confirms, then I will create an ordering object and set everything. 
   //if not then just return
-  
 
-  if(testUser.getCart() == null || testUser.getCart().size() < 1){
+  var cart = dataB.getUserCart(user);
 
-    var finalMessage = "You currently have no items in your cart.";  
-    bot.sendMessage(fromId, finalMessage);
-
-  }
-
-  else{
-
-    var messagePart1 = "This is your current cart. \n\n";
-    var itemsInCartMessage = "";
-    var messagePart3 = "\n\nAre you sure you want to place this order? Type in either yes or no"
-
-    var i = 1;
+  cart.then(function(cartResults) {
       
-    for (let cartItem of testUser.getCart().getItems().values()) {
+    console.log(cartResults);
 
-      itemsInCartMessage = itemsInCartMessage + i + '):\nProduct Name: '+cartItem.getItem().getName()+'\nProduct ID: ' + cartItem.getItem().getId()+'\nQuantity: '+cartItem.getQuantity()+'\n';
-  
+    if(cartResults==null || cartResults.length < 1){
+
+      var finalMessage = "You currently have no items in your cart.";  
+      bot.sendMessage(fromId, finalMessage);
+
+
+    }
+
+    else{
+
+      var i = 1;
+      var messagePart1 = "This is your current cart. \n\n";  
+      var itemsInCartMessage = "";
+      var messagePart3 = "\n\nAre you sure you want to place this order? Type in either /yes or /no";
+
+      for(var indexCart = 0; indexCart < cartResults.length; indexCart++){
+        
+        itemsInCartMessage += i+") Product: "+cartResults[indexCart].name+" : Quantity: "+cartResults[indexCart].quantity+"\n";
+        i++;
+
+
+      }
+
+      var finalMessage = messagePart1 + itemsInCartMessage + messagePart3;  
+      bot.sendMessage(fromId, finalMessage);
+
     }
     
-    var finalMessage = messagePart1 + itemsInCartMessage + messagePart3;  
-    bot.sendMessage(fromId, finalMessage);
-
-    
-
-    bot.onText(/\/yes/, function (msg, type) {
-      
-      var fromId = msg.from.id;
-
-    //here we make the order object to be able to order the items in the cart
-      var order = new order();
-
-      //need to get this all from the database
-      order.setBillingAddress(validAddress);
-      order.setCustomer(customer);
-      order.setShippingAddress(validAddress);
-      order.setIsGift(false);
-      order.setMaxPrice(1); 
-      order.setPaymentMethod(paymentMethod);
-    
-      
-      bot.sendMessage(fromId, yes);
-    
-    
-      
-    });
-
-  }
+   
+  });
   
    
   
 });
 
+bot.onText(/\/no/, function (msg, type) {
 
+  var fromId = msg.from.id;
+  var response = "Ok no worries. We'll keep your cart until you're ready!"
+
+  bot.sendMessage(fromId, response);  
+
+
+});
+
+var paymentMethod = new PaymentMethod();
+
+bot.onText(/\/yes/, function (msg, match) {
+
+  var fromId = msg.from.id;
+  var response = `Please enter in your credit card number!
+  
+  Type /cardnumber <cardnumber> to set your card number`;
+
+  bot.sendMessage(fromId, response);  
+
+
+});
+
+bot.onText(/\/cardnumber(.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var number = match[1].toString();
+  
+  paymentMethod.setNumber(number.trim());
+  
+  var response = `Please enter in your security code!
+
+  Type /securitycode <securitycode> to set your security code`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/securitycode(.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var security = match[1].toString();
+  
+  paymentMethod.setSecurityCode(security.trim());
+
+  var response = `Please enter in your expiration date!
+
+  Type /expirationdate <M/YYYY> to set your security code
+  
+  For example: /expirationdate 1/2020`;
+
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/expirationdate(.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+
+  var expiration = match[1].toString();
+  var month = expiration.split('/')[0].trim();
+  var year = expiration.split('/')[1].trim();
+
+  paymentMethod.setExpiration(month, year);
+  
+
+  var response = `Please enter in you the name on your card!
+
+  Type /nameoncard <name on card> to set the name on the card`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+bot.onText(/\/nameoncard(.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var name = match[1].toString();
+  paymentMethod.setNameOnCard(name.trim());
+
+  var response = `Your payment method is set!
+
+  Type /confirm to confirm your order`;
+
+  bot.sendMessage(fromId, response);
+
+});
+
+
+bot.onText(/\/confirm/, function (msg, type) {
+  var fromId = msg.from.id;
+  var customer = new Customer();
+  
+  //customer.setId("kikomoto96"); 
+  customer.setId(msg.from.username);
+
+  var items = dataB.getUserItems(customer);
+  var userData = dataB.getUserData(customer);
+  var cart = dataB.getUserCart(customer);
+
+  userData.then(function(userDataResult) {
+
+    items.then(function(itemsResult) {
+
+      cart.then(function(cartResults) {
+      
+        console.log(cartResults);
+        console.log(itemsResult);
+
+        var cart = new Cart();
+        var order = new Order();
+
+        var customer2 = new Customer();
+        customer2.setId(msg.from.username);
+       
+
+        for(var indexCart = 0; indexCart < cartResults.length; indexCart++){
+        
+            for(var indexItems = 0; indexItems < itemsResult.length; indexItems++){
+              
+                if(cartResults[indexCart].name == itemsResult[indexItems].name){
+                  
+                  var item = new Item();
+
+                  var id = itemsResult[indexItems].link.split('/dp/')[1]
+                  if (id.includes('/')) {
+                      id = id.split('/')[0]
+                  }
+
+                  item.setId(id);
+                  item.setName(itemsResult[indexItems].name);
+                  item.setCost(itemsResult[indexItems].cost);
+                  item.setLink(itemsResult[indexItems].link);
+                  cart.addItem(item, cartResults[indexCart].quantity);
+                  
+
+                }
+
+        
+            }
+          
+        }
+
+        //console.log(userDataResult);
+        //console.log(paymentMethod);
+
+        customer2.setCart(cart);
+        customer2.setUsername(userDataResult.username);
+        customer2.setPassword(userDataResult.password);
+
+        order.setPaymentMethod(paymentMethod);
+        order.setCustomer(customer2);
+        order.setIsGift(false);
+        order.setMaxPrice(1);
+        var address = new Address();
+
+        address.setAddressLine1(userDataResult.address_1);
+        address.setAddressLine2(userDataResult.address_2);
+        address.setZipCode(userDataResult.zip_code);
+        address.setCity(userDataResult.city);
+        address.setState(userDataResult.state);
+        address.setCountry(userDataResult.country);
+        address.setAddressLine1(userDataResult.address_1);
+        address.setFirstName(userDataResult.first_name);
+        address.setLastName(userDataResult.last_name);
+      
+        address.setPhoneNumber(userDataResult.phone_number);
+
+        order.setBillingAddress(address);
+        order.setShippingAddress(address);
+
+        var orderID = productOrder.orderItem(order);
+
+        var response = ("This is your order code is " + orderID);
+        var fromId = msg.from.id;
+        bot.sendMessage(fromId, response);
+      
+    
+    });
+    
+  });
+
+});
+
+});
 
 
 

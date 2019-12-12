@@ -30,7 +30,7 @@ class Order {
     }
 
     setCustomer(customer) {
-        if (customer === null || !customer.isValid()) {
+        if (customer === null ) {
             return;
         }
 

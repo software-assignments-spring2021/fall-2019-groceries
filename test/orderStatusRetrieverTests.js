@@ -8,13 +8,19 @@ describe('OrderStatusRetriever tests', function() {
     it('Test retrieves orders', function() {
         orderStatusRetriever.retrieveOrderStatus()
         .then((orders) => {
-            // Example usage:
-            // for (let order of orders) {
-            //     console.log("Order #" + order['request_id'] + "\nCreated At: " + order['_created_at']);
-            //     for (let product of order['request']['products'])
-            //         console.log("\tQuantity: " + product['quantity'] + " Id: " + product['product_id']);
-            // }      
             return expect(orders[0]).to.have.property("request_id");      
         })        
-	});
+    });
+
+    it('Test retrieves order with specific id', function() {
+        var resp = orderStatusRetriever.retrieveOrderStatusSync('dd18bc9e32f80f237c55579d18ac9d28'); 
+        assert.equal(resp['request']['retailer'], 'amazon');
+    });
+
+    it('Test gets item data', function(){
+        orderStatusRetriever.getItemData('B07XR5TRSZ')
+        .then((itemData) => {
+            return expect(itemData).to.have.property("request_id");    
+        });
+    });
 })

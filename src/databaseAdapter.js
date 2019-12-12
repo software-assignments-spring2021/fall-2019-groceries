@@ -15,12 +15,20 @@ class DatabaseAdapter {
 		userData["password"] = user.getPassword();
 
 		const userAddress = user.getAddress();
-		userData["full_name"] = user.getName();
-		userData["address"] = userAddress.getAddressLine1();
+		userData["first_name"] = userAddress.getFirstName();
+		userData["last_name"] = userAddress.getLastName();
+		userData["address_1"] = userAddress.getAddressLine1();
 		userData["phone_number"] = userAddress.getPhoneNumber();
+		userData["address_2"] = userAddress.getAddressLine2();
+		userData["zip_code"] = userAddress.getZipCode();
+		userData["city"] = userAddress.getCity();
+		userData["state"] = userAddress.getState();
+		userData["country"] = userAddress.getCountry();
+    
 
 		// send GET without blocking
 		var response = await this.sendPostRequest(userData, endpoint);
+		console.log("response from adding "+response);
 		return response;
 	}
 
@@ -77,6 +85,7 @@ class DatabaseAdapter {
 
 	async getUserCart(user) {
 		const endpoint = this.baseEndpoint + 'carts/' + user.getId();
+
 		
 		// get user's cart without blocking
 		var userCartJSON = await this.sendGetRequest(endpoint);

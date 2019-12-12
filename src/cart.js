@@ -83,6 +83,7 @@ class Cart {
         for (let cartItem of this.items.values()) {
             str += "Item: " + cartItem.getItem().getName();
             str += " Quantity: " + cartItem.getQuantity() + "\n";
+            str += " Price: " + cartItem.getItem().getCost() + "\n";
         }
 
         return str;

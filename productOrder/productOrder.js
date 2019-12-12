@@ -24,39 +24,50 @@ module.exports = {
         var cart = order.getCart();
 
         var items = "";
-       
-        for (let cartItem of cart.getItems().values()) {
 
-            items = items + '{ "product_id": "' + cartItem.getItem().getId()+'", "quantity": '+cartItem.getQuantity()+" }, ";
+        console.log("cart length is"+cart.size());
+        console.log("cart  is"+cart);
+
+        if(cart == null || cart.length < 1){
            
+            console.log("hi");
+            return "You have no items in your carts";
+
         }
-
-        items = items.substring(0,items.length-2);
-
-        var jsonOrder = '{ "retailer": "amazon", "products": ['+ items +
-        ' ], "max_price":'+ maxPrice +', "shipping_address": { "first_name": "'+shippingAddress.getFirstName()+'", "last_name": "'+shippingAddress.getLastName()+'",'+
-        '"address_line1": "'+shippingAddress.getAddressLine1()+'", "address_line2": "'+shippingAddress.getAddressLine2()+'","zip_code": "'+shippingAddress.getZipCode()+'", "city": "'+shippingAddress.getCity()+'",'+
-        '"state": "'+shippingAddress.getState()+'", "country": "'+shippingAddress.getCountry()+'", "phone_number": "'+shippingAddress.getPhoneNumber()+'" }, "payment_method": { "name_on_card": "'+paymentMethod.getNameOnCard()+'",'+
-        '"number": "'+paymentMethod.getNumber()+'", "security_code": "'+paymentMethod.getSecurityCode()+'", "expiration_month": '+paymentMethod.getExpirationMonth()+', "expiration_year": '+paymentMethod.getExpirationYear()+', "use_gift": false},'+
-        '"retailer_credentials": { "email": "'+customer.getUsername()+'", "password": "'+customer.getPassword()+'" },'+
-        '"billing_address": { "first_name": "'+billingAddress.getFirstName()+'", "last_name": "'+billingAddress.getLastName()+'", "address_line1": "'+billingAddress.getAddressLine1()+'","address_line2": "'+billingAddress.getAddressLine2()+'",'+
-        '"zip_code": "'+billingAddress.getZipCode()+'","city": "'+billingAddress.getCity()+'","state": "'+billingAddress.getState()+'","country": "'+billingAddress.getCountry()+'","phone_number": "'+billingAddress.getPhoneNumber()+'"},'+
-        '"is_gift":'+ isGift +', '+'"shipping_method":"cheapest"}';
-
-
-        xmlHttp = new XMLHttpRequest();  
-        xmlHttp.open( "POST", url, false );
-        xmlHttp.setRequestHeader('Authorization', 'Basic '+base64encodedData);
-        
-        xmlHttp.send(jsonOrder);
-
-        var requestIDJSON = JSON.parse(xmlHttp.responseText);
-
-        var requestID = requestIDJSON.request_id;
-        
        
-        return requestID;
+        else{
+            for (let cartItem of cart.getItems().values()) {
 
+                items = items + '{ "product_id": "' + cartItem.getItem().getId()+'", "quantity": '+cartItem.getQuantity()+" }, ";
+            
+            }
+
+            items = items.substring(0,items.length-2);
+
+            var jsonOrder = '{ "retailer": "amazon", "products": ['+ items +
+            ' ], "max_price":'+ maxPrice +', "shipping_address": { "first_name": "'+shippingAddress.getFirstName()+'", "last_name": "'+shippingAddress.getLastName()+'",'+
+            '"address_line1": "'+shippingAddress.getAddressLine1()+'", "address_line2": "'+shippingAddress.getAddressLine2()+'","zip_code": "'+shippingAddress.getZipCode()+'", "city": "'+shippingAddress.getCity()+'",'+
+            '"state": "'+shippingAddress.getState()+'", "country": "'+shippingAddress.getCountry()+'", "phone_number": "'+shippingAddress.getPhoneNumber()+'" }, "payment_method": { "name_on_card": "'+paymentMethod.getNameOnCard()+'",'+
+            '"number": "'+paymentMethod.getNumber()+'", "security_code": "'+paymentMethod.getSecurityCode()+'", "expiration_month": '+paymentMethod.getExpirationMonth()+', "expiration_year": '+paymentMethod.getExpirationYear()+', "use_gift": false},'+
+            '"retailer_credentials": { "email": "'+customer.getUsername()+'", "password": "'+customer.getPassword()+'" },'+
+            '"billing_address": { "first_name": "'+billingAddress.getFirstName()+'", "last_name": "'+billingAddress.getLastName()+'", "address_line1": "'+billingAddress.getAddressLine1()+'","address_line2": "'+billingAddress.getAddressLine2()+'",'+
+            '"zip_code": "'+billingAddress.getZipCode()+'","city": "'+billingAddress.getCity()+'","state": "'+billingAddress.getState()+'","country": "'+billingAddress.getCountry()+'","phone_number": "'+billingAddress.getPhoneNumber()+'"},'+
+            '"is_gift":'+ isGift +', '+'"shipping_method":"cheapest"}';
+
+
+            xmlHttp = new XMLHttpRequest();  
+            xmlHttp.open( "POST", url, false );
+            xmlHttp.setRequestHeader('Authorization', 'Basic '+base64encodedData);
+
+            xmlHttp.send(jsonOrder);
+
+            var requestIDJSON = JSON.parse(xmlHttp.responseText);
+
+            var requestID = requestIDJSON.request_id;
+            
+        
+            return requestID;
+        }
     },
 
 

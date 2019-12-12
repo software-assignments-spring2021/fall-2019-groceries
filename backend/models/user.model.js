@@ -26,7 +26,8 @@ const userSchema = new Schema({
         minlength: 3
     },
     password: {type: String, required: true},
-    full_name: {type: String, required: true},
+    first_name: {type: String, required: true},
+    last_name: {type: String, required: true},
     address_1: {type: String, required: true},
     address_2: {type: String, required: true},
     zip_code: {type: String, required: true},

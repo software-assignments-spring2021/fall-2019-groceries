@@ -305,6 +305,7 @@ bot.onText(/\/search (.+)/, function (msg, match) {
   
   var matches = 0;
   for (let index = 0; matches < 5; index++) {  
+    
     if (resultJSON["results"][index]["price"] === undefined) {
       continue;
     }
@@ -339,11 +340,54 @@ bot.onText(/\/search (.+)/, function (msg, match) {
 //product ordering
 bot.onText(/\/order/, function (msg) {
   
-  var fromId = msg.from.id;
+  //var fromId = msg.from.id;
 
   //show the user the current cart, if he confirms, then I will create an ordering object and set everything. 
   //if not then just return
   
+		//var databaseAdapter = new DatabaseAdapter();
+  
+    var user = new Customer();
+    user.setId("mdc");
+    //user.setId(msg.from.username);
+   
+    var request = dataB.getUserItems(user);
+    var data = dataB.getUserData(user);
+    
+    request.then(function(result) {
+
+      var cart = new Cart();
+      
+      for(var i = 0; i < result.length; i++){
+        
+        var item = new Item();
+        item.setId(result[i].id);
+        item.setName(result[i].name);
+        item.setCost(result[i].cost);
+        item.setLink(result[i].link);
+        
+        //console.log(result[i]);
+        //console.log(result[i].id);
+        //console.log(result[i].name);
+        //console.log(result[i].cost);
+        //console.log(result[i].link);
+
+        cart.addItem(item);
+
+
+      }
+      
+      console.log(cart.toString());
+      
+
+      
+    
+    
+    
+    })
+    
+
+    
 
   if(testUser.getCart() == null || testUser.getCart().size() < 1){
 

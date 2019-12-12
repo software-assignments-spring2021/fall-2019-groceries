@@ -27,7 +27,12 @@ const userSchema = new Schema({
     },
     password: {type: String, required: true},
     full_name: {type: String, required: true},
-    address: {type: String, required: true},
+    address_1: {type: String, required: true},
+    address_2: {type: String, required: true},
+    zip_code: {type: String, required: true},
+    city: {type: String, required: true},
+    state: {type: String, required: true},
+    country: {type: String, required: true},
     phone_number: {type: Number, required: true},
     aliases: {type: [aliasSchema]},
     cartAliases: {type: [cartAliasSchema]}

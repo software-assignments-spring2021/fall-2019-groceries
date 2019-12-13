@@ -12,6 +12,7 @@ const {Cart, CartItem} = require("../../src/cart");
 const {Order} = require("../../src/order");
 const productOrder = require("../../productOrder/productOrder.js");
 const {OrderStatusRetriever} = require("../../src/orderStatusRetriever");
+const OrderCancellationExecutor = require("../../src/orderCancellationExecutor");
 
 
 process.env["NTBA_FIX_319"] = 1
@@ -969,6 +970,7 @@ bot.onText(/\/queryorderstatus (.+)/, function(msg, match) {
   else {
     const orderId = match[1];
     var queryResults = orderStatusRetriever.retrieveOrderStatusSync(orderId);
+    console.log(queryResults);
     if (queryResults['_type'] == 'error') {
       bot.sendMessage(msg.from.id, "This order never went through!\nIt failed with reason: " + 
         queryResults['data']['message']);
@@ -1004,6 +1006,30 @@ bot.onText(/\/vieworders/, function(msg, match) {
       bot.sendMessage(msg.from.id, orderHistoryString);
     }    
   })
+});
+
+bot.onText(/\/cancelorder (.+)/, function(msg, match) { 
+  if (match.length < 2) {
+    bot.sendMessage(msg.from.id, "Error: please specify a request id to cancel.");
+  }
+  else {
+    const requestId = match[1];
+    var queryResults = orderStatusRetriever.retrieveOrderStatusSync(requestId);
+    console.log(queryResults);
+    if (queryResults['_type'] == 'error') {
+      bot.sendMessage(msg.from.id, "This order never went through!\nIt failed with reason: " + 
+        queryResults['data']['message']);
+    }
+    else if (queryResults['bundled_order_ids'].length == 0) {
+      bot.sendMessage(msg.from.id, "Amazon is still processing the order. Try again soon!\n");
+    }
+    else {
+      // note: there will never be more than one amazon order id for a given request id
+      const amazonIds = queryResults['bundled_order_ids'][0];
+      const cancellationResponse = OrderCancellationExecutor.cancelOrder(requestId, amazonIds);      
+      bot.sendMessage(msg.from.id, "Cancellation response:\n" + cancellationResponse +);
+    }
+  }  
 });
 
 //build list 0 for coms 1 for groceries

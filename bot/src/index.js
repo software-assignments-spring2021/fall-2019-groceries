@@ -159,6 +159,7 @@ List of commands (use drop down menu as well): \n
 /viewcart - I'll show you your cart \n
 /vieworders - I'll show you your last 10 orders \n
 /queryorderstatus <id> - I'll give you the status of order #<id> \n
+/cancelorder <id> - I'll try my best to cancel that order\n
 /setitemalias <name> <link> - I'll add an alias for <link>\n
 /setcartalias <name> - I'll alias your current cart\n
 /removeitemalias <name> - I'll get rid of that item alias!\n
@@ -1015,7 +1016,6 @@ bot.onText(/\/cancelorder (.+)/, function(msg, match) {
   else {
     const requestId = match[1];
     var queryResults = orderStatusRetriever.retrieveOrderStatusSync(requestId);
-    console.log(queryResults);
     if (queryResults['_type'] == 'error') {
       bot.sendMessage(msg.from.id, "This order never went through!\nIt failed with reason: " + 
         queryResults['data']['message']);

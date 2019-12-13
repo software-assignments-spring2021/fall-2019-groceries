@@ -12,7 +12,7 @@ const {Cart, CartItem} = require("../../src/cart");
 const {Order} = require("../../src/order");
 const productOrder = require("../../productOrder/productOrder.js");
 const {OrderStatusRetriever} = require("../../src/orderStatusRetriever");
-const OrderCancellationExecutor = require("../../src/orderCancellationExecutor");
+const OrderCancellationExecutor = require("../../src/orderCancellationExecutor").OrderCancellationExecutor;
 
 
 process.env["NTBA_FIX_319"] = 1

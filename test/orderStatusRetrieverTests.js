@@ -18,9 +18,7 @@ describe('OrderStatusRetriever tests', function() {
     });
 
     it('Test gets item data', function(){
-        orderStatusRetriever.getItemData('B07XR5TRSZ')
-        .then((itemData) => {
-            return expect(itemData).to.have.property("title");    
-        });
+        var itemData = orderStatusRetriever.getItemDataSync('B07XR5TRSZ');
+        assert.isNotNull(itemData["title"]);
     });
 })

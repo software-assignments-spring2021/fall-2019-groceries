@@ -52,11 +52,6 @@ describe('Order tests', function() {
         assert.equal(order.getCustomer(), customer);
     });
 
-    it('test invalid customer does not modify', function() {
-        order.setCustomer(new Customer());
-        assert.isNull(order.getCustomer());
-    });
-
     it('test order id modification', function() {
         order.setId("0xFFFF");
         assert.equal(order.getId(), "0xFFFF");

@@ -58,12 +58,4 @@ describe('Cart tests', function() {
 		cart.addItem(avocado, 2);
 		assert.equal(cart.getSubtotal(), 200);
 	});
-
-	it('test toString displays item names and quantities with newline seperation', 
-		function() {
-			cart.addItem(avocado, 2);
-			cart.addItem(apple, 2);
-			const expectedString = "Item: avocado Quantity: 2\nItem: apple Quantity: 2\n";
-			assert.equal(cart.toString(), expectedString);
-	});
 });

@@ -19,7 +19,7 @@ process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAF5F1xANfGlvcuM3lIr4bmJcqb2OXUU9A8"
+const token = "708748902:AAHAQPJU1J_GSn4pTSGrq7p22-p_XYZuyuA"
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -483,9 +483,10 @@ bot.onText(/\/search (.+)/, function (msg, match) {
 });
 
 
-bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+bot.on("callback_query", (callbackQuery) => {
   const action = callbackQuery.data;
-  var fromId = msg.from.id;
+  const message = callbackQuery.message;
+  
   console.log("hello");
   var text;
   if (action === '1') {
@@ -509,11 +510,10 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 
   }
   console.log("sends message");
-  bot.sendMessage(fromId, text);
+  bot.sendMessage(message.chat.id, text);
 
 
 });
-
 
 
 //product ordering

@@ -284,10 +284,12 @@ bot.onText(/\/setzipcode (.+)/, function (msg, match) {
 
 
 //function contains method to return the user data or any data from the database
-bot.onText(/\/displayuser (.+)/, function (msg, match) {
+
+//function contains method to return the user data or any data from the database
+bot.onText(/\/displayuser/, function (msg, match) {
   var fromId = msg.from.id;
   
-  searchUser.setId(match[1]);
+  searchUser.setId(fromId);
   var resp = dataB.getUserData(searchUser);
   
   resp.then((value) => {
@@ -404,6 +406,9 @@ edit user cart
 -
 */
 
+var itemArray = [];
+
+
 bot.onText(/\/search (.+)/, function (msg, match) {
   var fromId = msg.from.id;
 
@@ -416,6 +421,7 @@ bot.onText(/\/search (.+)/, function (msg, match) {
   var imageLink;
   var subString = "";
   var priceString = "";
+  var userItem = new Item();
   
   var pickItem = "Here are the top 5 picks for you.\n";
   
@@ -426,9 +432,14 @@ bot.onText(/\/search (.+)/, function (msg, match) {
       continue;
     }
 
+    var userItem = new Item();
     matches += 1;
     subString = subString + matches +`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
     priceString = (resultJSON["results"][index]["price"]).toString();
+    userItem.setName(resultJSON["results"][index]["title"]);
+    userItem.setId(resultJSON["results"][index]["product_id"]);
+    userItem.setLink(resultJSON["results"][index]["image"]);
+
    
     if (priceString.length < 3) {
       if (priceString.length < 2) {  
@@ -443,14 +454,66 @@ bot.onText(/\/search (.+)/, function (msg, match) {
       integer /= 100;      
       priceString = integer;    
     }
+    userItem.setCost(priceString);
+    itemArray.push(userItem);
 
-    subString = subString + "Price: " + "$" + priceString + "\n";
-    subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
+    subString = subString + "Price: " + "$" + priceString + "\n\n";
+    //subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
   }
   
   pickItem = pickItem + subString; 
   bot.sendMessage(fromId, pickItem);
+  bot.sendMessage(fromId, "Please select any of the items if you would like to add them to your cart", {
+    reply_markup: {
+        inline_keyboard: [
+
+        [{ text: '1', callback_data: '1' },
+        { text: '2', callback_data: '2' },
+        { text: '3', callback_data: '3' },
+        { text: '4', callback_data: '4' },
+        { text: '5', callback_data: '5' }],
+        [{ text: 'Load more', callback_data: 'Load more' }]
+      
+      ],
+    },
+}).then(function() {
+    console.log('message sent');
+}).catch(console.error);
+
 });
+
+
+bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+  const action = callbackQuery.data;
+  var fromId = msg.from.id;
+  console.log("hello");
+  var text;
+  if (action === '1') {
+    console.log("action 1");
+    text = 'Item added!';
+  }
+  else if (action === '2') {
+    text = 'Item added!';
+  }
+  else if (action === '3') {
+    text = 'Item added!';
+  }
+  else if (action === '4') {
+    text = 'Item added!';
+  }
+  else if (action === '5') {
+    text = 'Item added!';
+  }
+  else if(action === 'Load more') {
+    text = 'Here are more search results';
+
+  }
+  console.log("sends message");
+  bot.sendMessage(fromId, text);
+
+
+});
+
 
 
 //product ordering
@@ -1027,7 +1090,7 @@ bot.onText(/\/cancelorder (.+)/, function(msg, match) {
       // note: there will never be more than one amazon order id for a given request id
       const amazonIds = queryResults['bundled_order_ids'][0];
       const cancellationResponse = OrderCancellationExecutor.cancelOrder(requestId, amazonIds);      
-      bot.sendMessage(msg.from.id, "Cancellation response:\n" + cancellationResponse +);
+      bot.sendMessage(msg.from.id, "Cancellation response:\n" + cancellationResponse);
     }
   }  
 });

@@ -4,7 +4,7 @@ const {Customer} = require("../../src/customer");
 const {Address} = require("../../src/address");
 const {PaymentMethod} = require("../../src/paymentMethod");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
-const {AddUserAliasRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
+const {AddCartItemRequest, AddUserAliasRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
 const {IBot} = require("./ibot");
 const {Item} = require("../../src/item");
@@ -18,8 +18,10 @@ const OrderCancellationExecutor = require("../../src/orderCancellationExecutor")
 process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
+var itemArray = [];
+var resultJSON;
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAF5F1xANfGlvcuM3lIr4bmJcqb2OXUU9A8"
+const token = "708748902:AAHAQPJU1J_GSn4pTSGrq7p22-p_XYZuyuA"
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -33,6 +35,12 @@ var userInfoArray = [null,null,null];
 var searchUser =  new Customer();
 var userItem = new Item();
 var userCart = new Cart();
+var globalNum = 5;
+
+var botShim = new IBot();
+var requestProcessor = new RequestProcessor();
+requestProcessor.setBot(botShim);
+requestProcessor.setDatabase(new DatabaseAdapter());
 
 
 class UserEntry{
@@ -284,10 +292,12 @@ bot.onText(/\/setzipcode (.+)/, function (msg, match) {
 
 
 //function contains method to return the user data or any data from the database
-bot.onText(/\/displayuser (.+)/, function (msg, match) {
+
+//function contains method to return the user data or any data from the database
+bot.onText(/\/displayuser/, function (msg, match) {
   var fromId = msg.from.id;
   
-  searchUser.setId(match[1]);
+  searchUser.setId(fromId);
   var resp = dataB.getUserData(searchUser);
   
   resp.then((value) => {
@@ -306,84 +316,62 @@ bot.onText(/\/displayuser (.+)/, function (msg, match) {
 */
 bot.onText(/\/add (.+)/, function (msg, match) {
   var fromId = msg.from.id;
-  var array = parse_entry(match[1]);
+  console.log(msg.from.id)
+  console.log(msg.from.username)
+  var array = match[1].split(" ")
   
   //TODO: if quantity is 0 raise error
   var quantity = parseInt(array[0]);
   if (quantity < 1) {
-    response = "Invalid number of items, please try again: correct way : /add 5 apples"
+    response = "Invalid number of items, please try again: correct way : /add apples"
     bot.sendMessage(fromId, response);   
   }
   else {
-    //userItem
 
-  // item.setCost(5); -- from search
-	// item.setId("1"); -- not used
-	// item.setLink("amazon.com/item"); -- from search
-  // item.setName("avocado"); -- item name from alias/search
-  // cart.addItem(avocado, 2); -- cart command / loop for more than one item 
-  //
 
     //TODO: Check for alias
     if ((array.length > 1 ) && (array.length < 3)) {      
-      var testCart = new Cart();
-      var item = new Item();
-      
-      item.setId("B07RSSPBGJ");
-      item.setName("Banana");
-      testCart.addItem(item,quantity);
+      //check for alias
 
-      testUser.setCart(testCart);      
-      
-      // var searchResults = Search.
-      // var result = search.searchItem("banana");
+      user = new Customer();
+     
+      user.setId(msg.from.username);//change to fromID on release
 
-      // var resultJSON = JSON.parse(result.responseText);
-      var searchResults = Search.searchItem(array[1]);
-      var resultJSON = JSON.parse(searchResults.responseText);
-      var cost;
-      var id;
-      var name;
-      var imageLink;
-      var subString = "";
-      var priceString;
-      var pickItem = `Here are the top 5 picks for you. 
-      \nSelect which one you would like to add: \n`;
-      
-      var matches = 0;
-
-      for (let index = 0; matches < 5; index++) {
-        if (resultJSON["results"][index]["price"] === undefined) {
-          continue;
+      var aliasFound = 0;
+      dataB.getUserAliases(user)
+        .then((itemAliases) => {
+          for (let itemAlias of itemAliases) {
+            
+            if (itemAlias['name'] == array[1]){
+              aliasFound = 1;
+            }
         }
+        if (aliasFound == 1) {
+          // //add item
+          var request = new AddCartItemRequest();
+          request.setUser(user);
+          request.setItemAlias(array[1]);
+          request.setItemQuantity(quantity);
+          requestProcessor.onAddCartItemRequest(request)
+          .then(() => {
+            bot.sendMessage(fromId,"Item added!")
+          })  
+          // bot.sendMessage(fromId,"Item added!")     
+        } else {
+          console.log(itemAliases);
+
+          
+          response = "Oh oh your alias doesn't exist, create one here: /setitemalias <name> <link>"
+          bot.sendMessage(fromId,response)
+        }
+            
+      })
         
-        matches += 1;
+      
 
-        subString = subString + matches + `):` + "\n" + resultJSON["results"][index]["title"] + "\n";
-        priceString = (resultJSON["results"][index]["price"]).toString();
-        console.log(priceString);
-        console.log(typeof(priceString));
-        if (priceString.length < 3) {
-          if (priceString.length < 2) {
-            priceString = "0.0"+priceString;
-          }else{
-            priceString = "0."+priceString;
-          }
-
-        }
-        else {
-          var integer = parseInt(priceString, 10); 
-          integer /= 100;  
-          priceString = integer;
-        }
-
-        subString = subString + "Price: " + "$" + priceString + "\n";
-        subString = subString + resultJSON["results"][index]["image"] + "\n\n";                
-      }
-      pickItem = pickItem + subString;
-      bot.sendMessage(fromId, pickItem);
-    } 
-    else if (array.length > 2){
+    }
+  
+  else if (array.length > 2){
       response = "Too many keywords entered: correct way : /add 5 apples"
       bot.sendMessage(fromId, response);
     }
@@ -404,11 +392,13 @@ edit user cart
 -
 */
 
+
+
 bot.onText(/\/search (.+)/, function (msg, match) {
   var fromId = msg.from.id;
 
   var searchResults = Search.searchItem(match[1]);
-  var resultJSON = JSON.parse(searchResults.responseText);
+  resultJSON = JSON.parse(searchResults.responseText);
   
   var cost;
   var id;
@@ -416,6 +406,7 @@ bot.onText(/\/search (.+)/, function (msg, match) {
   var imageLink;
   var subString = "";
   var priceString = "";
+  var userItem = new Item();
   
   var pickItem = "Here are the top 5 picks for you.\n";
   
@@ -426,9 +417,14 @@ bot.onText(/\/search (.+)/, function (msg, match) {
       continue;
     }
 
+    var userItem = new Item();
     matches += 1;
     subString = subString + matches +`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
     priceString = (resultJSON["results"][index]["price"]).toString();
+    userItem.setName(resultJSON["results"][index]["title"]);
+    userItem.setId(resultJSON["results"][index]["product_id"]);
+    userItem.setLink(resultJSON["results"][index]["image"]);
+
    
     if (priceString.length < 3) {
       if (priceString.length < 2) {  
@@ -443,13 +439,159 @@ bot.onText(/\/search (.+)/, function (msg, match) {
       integer /= 100;      
       priceString = integer;    
     }
+    userItem.setCost(priceString);
+    itemArray.push(userItem);
 
-    subString = subString + "Price: " + "$" + priceString + "\n";
-    subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
+    subString = subString + "Price: " + "$" + priceString + "\n\n";
+    //subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
   }
   
   pickItem = pickItem + subString; 
   bot.sendMessage(fromId, pickItem);
+
+  bot.sendMessage(fromId, "Please select any of the items if you would like to add them to your cart", {
+    reply_markup: {
+        inline_keyboard: [
+
+        [{ text: '1', callback_data: '1' },
+        { text: '2', callback_data: '2' },
+        { text: '3', callback_data: '3' },
+        { text: '4', callback_data: '4' },
+        { text: '5', callback_data: '5' }],
+        [{ text: 'Load more', callback_data: 'Load more'}]
+      
+      ],
+    },
+}).then(function() {
+
+}).catch(console.error);
+
+});
+
+//callback for the inline buttons
+bot.on("callback_query", (callbackQuery) => {
+  const action = callbackQuery.data;
+  const message = callbackQuery.message;
+  var userID = message.chat.id
+  var queryUser =  new Customer();
+  queryUser.setId("Amos"); //change to userID
+
+  var item = []
+
+  var text;
+
+  if (action === '1') {
+  
+    item.push(itemArray[0]);
+    dataB.setUserItems(queryUser,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text); 
+  }
+  else if (action === '2') {
+    item.push(itemArray[1]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if (action === '3') {
+    item.push(itemArray[2]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if (action === '4') {
+    item.push(itemArray[3]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if (action === '5') {
+    item.push(itemArray[4]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!'
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if(action === 'Load more') {
+    var subString = "";
+  var priceString = "";
+  var userItem = new Item();
+  
+  var pickItem = "Here are more search results \n";
+  
+  var matches = globalNum;
+  var count = 0;
+  for (let index = globalNum ; matches < 5 + globalNum; index++) {  
+    
+    if (resultJSON["results"][index]["price"] === undefined) {
+      continue;
+    }
+    var userItem = new Item();
+    matches += 1;
+    subString = subString + (matches-globalNum) +`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
+    priceString = (resultJSON["results"][index]["price"]).toString();
+    userItem.setName(resultJSON["results"][index]["title"]);
+    userItem.setId(resultJSON["results"][index]["product_id"]);
+    userItem.setLink(resultJSON["results"][index]["image"]);
+
+   
+    if (priceString.length < 3) {
+      if (priceString.length < 2) {  
+        priceString = "0.0" + priceString;  
+      }
+      else {
+        priceString = "0." + priceString;  
+      }
+    } 
+    else {    
+      var integer = parseInt(priceString, 10); 
+      integer /= 100;      
+      priceString = integer;    
+    }
+    userItem.setCost(priceString);
+
+    itemArray.push(userItem);
+
+    subString = subString + "Price: " + "$" + priceString + "\n\n";
+    //subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
+  }
+  
+  pickItem = pickItem + subString; 
+  bot.sendMessage(userID, pickItem);
+
+  bot.sendMessage(userID, "Please select any of the items if you would like to add them to your cart", {
+    reply_markup: {
+        inline_keyboard: [
+
+        [{ text: '1', callback_data: '1' },
+        { text: '2', callback_data: '2' },
+        { text: '3', callback_data: '3' },
+        { text: '4', callback_data: '4' },
+        { text: '5', callback_data: '5' }],
+        [{ text: 'Load more', callback_data: 'Load more' }]
+      
+      ],
+    },
+}).then(function() {
+  globalNum = globalNum +5;
+}).catch(console.error);
+
+  }
+  console.log("sends message");
 });
 
 
@@ -699,10 +841,10 @@ bot.onText(/\/editcart (.+)/, function (msg, match) {
 
 });
 
-bot.onText(/\/displayuser (.+)/, function (msg, match) {
+bot.onText(/\/displayuser/, function (msg, match) {
   var fromId = msg.from.id;
   
-  search_user.setId(match[1]);
+  search_user.setId(msg.from.username);
   var resp = dataB.getUserData(search_user);
   
   resp.then((value) => {
@@ -712,11 +854,6 @@ bot.onText(/\/displayuser (.+)/, function (msg, match) {
 });
 
 /* aliases */
-
-var botShim = new IBot();
-var requestProcessor = new RequestProcessor();
-requestProcessor.setBot(botShim);
-requestProcessor.setDatabase(new DatabaseAdapter());
 
 // display aliases
 bot.onText(/\/showaliases/, function(msg, match) {
@@ -1027,7 +1164,7 @@ bot.onText(/\/cancelorder (.+)/, function(msg, match) {
       // note: there will never be more than one amazon order id for a given request id
       const amazonIds = queryResults['bundled_order_ids'][0];
       const cancellationResponse = OrderCancellationExecutor.cancelOrder(requestId, amazonIds);      
-      bot.sendMessage(msg.from.id, "Cancellation response:\n" + cancellationResponse +);
+      bot.sendMessage(msg.from.id, "Cancellation response:\n" + cancellationResponse);
     }
   }  
 });

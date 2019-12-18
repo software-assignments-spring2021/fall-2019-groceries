@@ -4,7 +4,7 @@ const {Customer} = require("../../src/customer");
 const {Address} = require("../../src/address");
 const {PaymentMethod} = require("../../src/paymentMethod");
 const {DatabaseAdapter} = require("../../src/databaseAdapter");
-const {AddUserAliasRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
+const {AddCartItemRequest, AddUserAliasRequest, DisplayUserAliasesRequest, DisplayUserCartRequest} = require("../../src/userRequests");
 const {RequestProcessor} = require('../../src/requestProcessor');
 const {IBot} = require("./ibot");
 const {Item} = require("../../src/item");
@@ -37,6 +37,10 @@ var userItem = new Item();
 var userCart = new Cart();
 var globalNum = 5;
 
+var botShim = new IBot();
+var requestProcessor = new RequestProcessor();
+requestProcessor.setBot(botShim);
+requestProcessor.setDatabase(new DatabaseAdapter());
 
 
 class UserEntry{
@@ -343,11 +347,18 @@ bot.onText(/\/add (.+)/, function (msg, match) {
             }
         }
         if (aliasFound == 1) {
-
-          //add item
-          response ="Item added!"
-          bot.sendMessage(fromId,response)
+          // //add item
+          var request = new AddCartItemRequest();
+          request.setUser(user);
+          request.setItemAlias(array[1]);
+          request.setItemQuantity(quantity);
+          requestProcessor.onAddCartItemRequest(request)
+          .then(() => {
+            bot.sendMessage(fromId,"Item added!")
+          })  
+          // bot.sendMessage(fromId,"Item added!")     
         } else {
+          console.log(itemAliases);
 
           
           response = "Oh oh your alias doesn't exist, create one here: /setitemalias <name> <link>"
@@ -843,11 +854,6 @@ bot.onText(/\/displayuser/, function (msg, match) {
 });
 
 /* aliases */
-
-var botShim = new IBot();
-var requestProcessor = new RequestProcessor();
-requestProcessor.setBot(botShim);
-requestProcessor.setDatabase(new DatabaseAdapter());
 
 // display aliases
 bot.onText(/\/showaliases/, function(msg, match) {

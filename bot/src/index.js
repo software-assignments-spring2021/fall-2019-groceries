@@ -18,6 +18,8 @@ const OrderCancellationExecutor = require("../../src/orderCancellationExecutor")
 process.env["NTBA_FIX_319"] = 1
 
 //TODO:REMOVE KEY BEFORE GIT PUSH
+var itemArray = [];
+var resultJSON;
 //To start: uncoment bot code and insert the token
 const token = "708748902:AAHAQPJU1J_GSn4pTSGrq7p22-p_XYZuyuA"
 const bot = new TelegramBot(token, {polling: true});
@@ -33,6 +35,7 @@ var userInfoArray = [null,null,null];
 var searchUser =  new Customer();
 var userItem = new Item();
 var userCart = new Cart();
+var globalNum = 5;
 
 
 class UserEntry{
@@ -342,7 +345,7 @@ bot.onText(/\/add (.+)/, function (msg, match) {
 
       // var resultJSON = JSON.parse(result.responseText);
       var searchResults = Search.searchItem(array[1]);
-      var resultJSON = JSON.parse(searchResults.responseText);
+      resultJSON = JSON.parse(searchResults.responseText);
       var cost;
       var id;
       var name;
@@ -406,14 +409,13 @@ edit user cart
 -
 */
 
-var itemArray = [];
 
 
 bot.onText(/\/search (.+)/, function (msg, match) {
   var fromId = msg.from.id;
 
   var searchResults = Search.searchItem(match[1]);
-  var resultJSON = JSON.parse(searchResults.responseText);
+  resultJSON = JSON.parse(searchResults.responseText);
   
   var cost;
   var id;
@@ -463,7 +465,140 @@ bot.onText(/\/search (.+)/, function (msg, match) {
   
   pickItem = pickItem + subString; 
   bot.sendMessage(fromId, pickItem);
+
   bot.sendMessage(fromId, "Please select any of the items if you would like to add them to your cart", {
+    reply_markup: {
+        inline_keyboard: [
+
+        [{ text: '1', callback_data: '1' },
+        { text: '2', callback_data: '2' },
+        { text: '3', callback_data: '3' },
+        { text: '4', callback_data: '4' },
+        { text: '5', callback_data: '5' }],
+        [{ text: 'Load more', callback_data: 'Load more'}]
+      
+      ],
+    },
+}).then(function() {
+
+}).catch(console.error);
+
+});
+
+//callback for the inline buttons
+bot.on("callback_query", (callbackQuery) => {
+  const action = callbackQuery.data;
+  const message = callbackQuery.message;
+  var userID = message.chat.id
+  var queryUser =  new Customer();
+  queryUser.setId("Amos");
+
+  var item = []
+  // Model:
+  // searchUser.setId(fromId);
+  // var resp = dataB.getUserData(searchUser);
+  
+  // resp.then((value) => {
+  //   var response = value["username"];
+  //   bot.sendMessage(fromId, response);   
+  // })
+
+
+  var text;
+
+  if (action === '1') {
+    item.push(itemArray[0]);
+    dataB.setUserItems(queryUser,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text); 
+  }
+  else if (action === '2') {
+    item.push(itemArray[1]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if (action === '3') {
+    item.push(itemArray[2]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if (action === '4') {
+    item.push(itemArray[3]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!';
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if (action === '5') {
+    item.push(itemArray[4]);
+    dataB.setUserItems(userID,item);
+    item = [];
+    text = 'Item added!'
+    globalNum = 5;
+    itemArray= [];
+    bot.sendMessage(userID,text);
+  }
+  else if(action === 'Load more') {
+    var subString = "";
+  var priceString = "";
+  var userItem = new Item();
+  
+  var pickItem = "Here are more search results \n";
+  
+  var matches = globalNum;
+  var count = 0;
+  for (let index = globalNum ; matches < 5 + globalNum; index++) {  
+    
+    if (resultJSON["results"][index]["price"] === undefined) {
+      continue;
+    }
+    var userItem = new Item();
+    matches += 1;
+    subString = subString + (matches-globalNum) +`):` + "\n" + resultJSON["results"][index]["title"] + "\n";
+    priceString = (resultJSON["results"][index]["price"]).toString();
+    userItem.setName(resultJSON["results"][index]["title"]);
+    userItem.setId(resultJSON["results"][index]["product_id"]);
+    userItem.setLink(resultJSON["results"][index]["image"]);
+
+   
+    if (priceString.length < 3) {
+      if (priceString.length < 2) {  
+        priceString = "0.0" + priceString;  
+      }
+      else {
+        priceString = "0." + priceString;  
+      }
+    } 
+    else {    
+      var integer = parseInt(priceString, 10); 
+      integer /= 100;      
+      priceString = integer;    
+    }
+    userItem.setCost(priceString);
+
+    itemArray.push(userItem);
+
+    subString = subString + "Price: " + "$" + priceString + "\n\n";
+    //subString = subString + resultJSON["results"][index]["image"] + "\n\n"; 
+  }
+  
+  pickItem = pickItem + subString; 
+  bot.sendMessage(userID, pickItem);
+
+  bot.sendMessage(userID, "Please select any of the items if you would like to add them to your cart", {
     reply_markup: {
         inline_keyboard: [
 
@@ -477,42 +612,11 @@ bot.onText(/\/search (.+)/, function (msg, match) {
       ],
     },
 }).then(function() {
-    console.log('message sent');
+  globalNum = globalNum +5;
 }).catch(console.error);
-
-});
-
-
-bot.on("callback_query", (callbackQuery) => {
-  const action = callbackQuery.data;
-  const message = callbackQuery.message;
-  
-  console.log("hello");
-  var text;
-  if (action === '1') {
-    console.log("action 1");
-    text = 'Item added!';
-  }
-  else if (action === '2') {
-    text = 'Item added!';
-  }
-  else if (action === '3') {
-    text = 'Item added!';
-  }
-  else if (action === '4') {
-    text = 'Item added!';
-  }
-  else if (action === '5') {
-    text = 'Item added!';
-  }
-  else if(action === 'Load more') {
-    text = 'Here are more search results';
 
   }
   console.log("sends message");
-  bot.sendMessage(message.chat.id, text);
-
-
 });
 
 

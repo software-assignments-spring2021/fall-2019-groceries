@@ -312,7 +312,8 @@ bot.onText(/\/displayuser/, function (msg, match) {
 */
 bot.onText(/\/add (.+)/, function (msg, match) {
   var fromId = msg.from.id;
-
+  console.log(msg.from.id)
+  console.log(msg.from.username)
   var array = match[1].split(" ")
   
   //TODO: if quantity is 0 raise error
@@ -330,7 +331,7 @@ bot.onText(/\/add (.+)/, function (msg, match) {
 
       user = new Customer();
      
-      user.setId(msg.from.id);//change to fromID on release
+      user.setId(msg.from.username);//change to fromID on release
 
       var aliasFound = 0;
       dataB.getUserAliases(user)
@@ -829,10 +830,10 @@ bot.onText(/\/editcart (.+)/, function (msg, match) {
 
 });
 
-bot.onText(/\/displayuser (.+)/, function (msg, match) {
+bot.onText(/\/displayuser/, function (msg, match) {
   var fromId = msg.from.id;
   
-  search_user.setId(match[1]);
+  search_user.setId(msg.from.username);
   var resp = dataB.getUserData(search_user);
   
   resp.then((value) => {

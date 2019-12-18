@@ -38,6 +38,7 @@ var userCart = new Cart();
 var globalNum = 5;
 
 
+
 class UserEntry{
   constructor(){
     this.firstName = null;
@@ -311,84 +312,54 @@ bot.onText(/\/displayuser/, function (msg, match) {
 */
 bot.onText(/\/add (.+)/, function (msg, match) {
   var fromId = msg.from.id;
-  var array = parse_entry(match[1]);
+
+  var array = match[1].split(" ")
   
   //TODO: if quantity is 0 raise error
   var quantity = parseInt(array[0]);
   if (quantity < 1) {
-    response = "Invalid number of items, please try again: correct way : /add 5 apples"
+    response = "Invalid number of items, please try again: correct way : /add apples"
     bot.sendMessage(fromId, response);   
   }
   else {
-    //userItem
 
-  // item.setCost(5); -- from search
-	// item.setId("1"); -- not used
-	// item.setLink("amazon.com/item"); -- from search
-  // item.setName("avocado"); -- item name from alias/search
-  // cart.addItem(avocado, 2); -- cart command / loop for more than one item 
-  //
 
     //TODO: Check for alias
     if ((array.length > 1 ) && (array.length < 3)) {      
-      var testCart = new Cart();
-      var item = new Item();
-      
-      item.setId("B07RSSPBGJ");
-      item.setName("Banana");
-      testCart.addItem(item,quantity);
+      //check for alias
 
-      testUser.setCart(testCart);      
-      
-      // var searchResults = Search.
-      // var result = search.searchItem("banana");
+      user = new Customer();
+     
+      user.setId(fromId);//change to fromID on release
 
-      // var resultJSON = JSON.parse(result.responseText);
-      var searchResults = Search.searchItem(array[1]);
-      resultJSON = JSON.parse(searchResults.responseText);
-      var cost;
-      var id;
-      var name;
-      var imageLink;
-      var subString = "";
-      var priceString;
-      var pickItem = `Here are the top 5 picks for you. 
-      \nSelect which one you would like to add: \n`;
-      
-      var matches = 0;
-
-      for (let index = 0; matches < 5; index++) {
-        if (resultJSON["results"][index]["price"] === undefined) {
-          continue;
+      var aliasFound = 0;
+      dataB.getUserAliases(user)
+        .then((itemAliases) => {
+          for (let itemAlias of itemAliases) {
+            
+            if (itemAlias['name'] == array[1]){
+              aliasFound = 1;
+            }
         }
+        if (aliasFound == 1) {
+
+          //add item
+          response ="Item added!"
+          bot.sendMessage(fromId,response)
+        } else {
+
+          
+          response = "Oh oh your alias doesn't exist, create one here: /setitemalias <name> <link>"
+          bot.sendMessage(fromId,response)
+        }
+            
+      })
         
-        matches += 1;
+      
 
-        subString = subString + matches + `):` + "\n" + resultJSON["results"][index]["title"] + "\n";
-        priceString = (resultJSON["results"][index]["price"]).toString();
-        console.log(priceString);
-        console.log(typeof(priceString));
-        if (priceString.length < 3) {
-          if (priceString.length < 2) {
-            priceString = "0.0"+priceString;
-          }else{
-            priceString = "0."+priceString;
-          }
-
-        }
-        else {
-          var integer = parseInt(priceString, 10); 
-          integer /= 100;  
-          priceString = integer;
-        }
-
-        subString = subString + "Price: " + "$" + priceString + "\n";
-        subString = subString + resultJSON["results"][index]["image"] + "\n\n";                
-      }
-      pickItem = pickItem + subString;
-      bot.sendMessage(fromId, pickItem);
-    } 
-    else if (array.length > 2){
+    }
+  
+  else if (array.length > 2){
       response = "Too many keywords entered: correct way : /add 5 apples"
       bot.sendMessage(fromId, response);
     }
@@ -491,22 +462,14 @@ bot.on("callback_query", (callbackQuery) => {
   const message = callbackQuery.message;
   var userID = message.chat.id
   var queryUser =  new Customer();
-  queryUser.setId("Amos");
+  queryUser.setId("Amos"); //change to userID
 
   var item = []
-  // Model:
-  // searchUser.setId(fromId);
-  // var resp = dataB.getUserData(searchUser);
-  
-  // resp.then((value) => {
-  //   var response = value["username"];
-  //   bot.sendMessage(fromId, response);   
-  // })
-
 
   var text;
 
   if (action === '1') {
+  
     item.push(itemArray[0]);
     dataB.setUserItems(queryUser,item);
     item = [];

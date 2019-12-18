@@ -330,7 +330,7 @@ bot.onText(/\/add (.+)/, function (msg, match) {
 
       user = new Customer();
      
-      user.setId(fromId);//change to fromID on release
+      user.setId(msg.from.id);//change to fromID on release
 
       var aliasFound = 0;
       dataB.getUserAliases(user)

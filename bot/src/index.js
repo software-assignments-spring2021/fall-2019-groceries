@@ -21,7 +21,8 @@ process.env["NTBA_FIX_319"] = 1
 var itemArray = [];
 var resultJSON;
 //To start: uncoment bot code and insert the token
-const token = "708748902:AAHAQPJU1J_GSn4pTSGrq7p22-p_XYZuyuA"
+
+const token = "708748902:AAFYtQOlbhnotmb1mWZBIO7w7EJI5Yl_RSI";
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -600,23 +601,24 @@ bot.onText(/\/order/, function (msg) {
   
   var fromId = msg.from.id;
 
-  user.setId(msg.from.username);
+  //user.setId(msg.from.username);
+  user.setId("mdc");
   
   //show the user the current cart, if he confirms, then I will create an ordering object and set everything. 
   //if not then just return
 
   var cart = dataB.getUserCart(user);
+  console.log("ji");
 
   cart.then(function(cartResults) {
-      
+    console.log("hi");
     console.log(cartResults);
+    console.log("fi");
 
     if(cartResults==null || cartResults.length < 1){
 
       var finalMessage = "You currently have no items in your cart.";  
       bot.sendMessage(fromId, finalMessage);
-
-
     }
 
     else{
@@ -641,7 +643,44 @@ bot.onText(/\/order/, function (msg) {
     
    
   });
+
   
+  var total = 0;
+
+    var items = dataB.getUserAliases(customer);
+    
+    var cart = dataB.getUserCart(customer);
+
+      items.then(function(itemsResult) {
+
+        cart.then(function(cartResults) {
+        
+          console.log(cartResults);
+          console.log(itemsResult);
+
+          for(var indexCart = 0; indexCart < cartResults.length; indexCart++){
+          
+              for(var indexItems = 0; indexItems < itemsResult.length; indexItems++){
+                
+                  if(cartResults[indexCart].name == itemsResult[indexItems].name){
+
+                    var id = itemsResult[indexItems].link.split('/dp/')[1];
+                    var price = getItemDataSync(id);
+                    price = price["price"];
+                    total += price;
+
+
+
+
+                  }
+                }
+              }
+            });
+          });
+  
+          var output = "This is your total: $"+total/100;
+
+          bot.sendMessage(fromId, output);
    
   
 });
@@ -739,45 +778,46 @@ bot.onText(/\/confirm/, function (msg, type) {
   
   //customer.setId("kikomoto96"); 
   customer.setId(msg.from.username);
+  //customer.setId("mdc");
 
-  var items = dataB.getUserItems(customer);
+  var items = dataB.getUserAliases(customer);
   var userData = dataB.getUserData(customer);
   var cart = dataB.getUserCart(customer);
 
-  userData.then(function(userDataResult) {
+  userData.then(function() {
 
-    items.then(function(itemsResult) {
+    items.then(function() {
 
-      cart.then(function(cartResults) {
+      cart.then(function() {
       
-        console.log(cartResults);
-        console.log(itemsResult);
+       // console.log(cartResults);
+        //console.log(itemsResult);
 
-        var cart = new Cart();
-        var order = new Order();
+        var cart1 = new Cart();
+        var order1 = new Order();
 
         var customer2 = new Customer();
         customer2.setId(msg.from.username);
        
 
-        for(var indexCart = 0; indexCart < cartResults.length; indexCart++){
+        for(var indexCart = 0; indexCart < cart.length; indexCart++){
         
-            for(var indexItems = 0; indexItems < itemsResult.length; indexItems++){
+            for(var indexItems = 0; indexItems < items.length; indexItems++){
               
-                if(cartResults[indexCart].name == itemsResult[indexItems].name){
+                if(cart[indexCart].name == items[indexItems].name){
                   
                   var item = new Item();
 
-                  var id = itemsResult[indexItems].link.split('/dp/')[1]
+                  var id = items[indexItems].link.split('/dp/')[1]
                   if (id.includes('/')) {
                       id = id.split('/')[0]
                   }
 
                   item.setId(id);
-                  item.setName(itemsResult[indexItems].name);
-                  item.setCost(itemsResult[indexItems].cost);
-                  item.setLink(itemsResult[indexItems].link);
-                  cart.addItem(item, cartResults[indexCart].quantity);
+                  item.setName(items[indexItems].name);
+                  item.setCost(items[indexItems].cost);
+                  item.setLink(items[indexItems].link);
+                  cart1.addItem(item, cart[indexCart].quantity);
                   
 
                 }
@@ -790,14 +830,213 @@ bot.onText(/\/confirm/, function (msg, type) {
         //console.log(userDataResult);
         //console.log(paymentMethod);
 
-        customer2.setCart(cart);
+        customer2.setCart(cart1);
+        customer2.setUsername(userData.username);
+        customer2.setPassword(userData.password);
+
+        order1.setPaymentMethod(paymentMethod);
+        order1.setCustomer(customer2);
+        order1.setIsGift(false);
+        order1.setMaxPrice(1);
+        var address = new Address();
+
+        address.setAddressLine1(userData.address_1);
+        address.setAddressLine2(userData.address_2);
+        address.setZipCode(userData.zip_code);
+        address.setCity(userData.city);
+        address.setState(userData.state);
+        address.setCountry(userData.country);
+        address.setAddressLine1(userData.address_1);
+        address.setFirstName(userData.first_name);
+        address.setLastName(userData.last_name);
+      
+        address.setPhoneNumber(userData.phone_number);
+
+        order1.setBillingAddress(address);
+        order1.setShippingAddress(address);
+
+        var orderID = productOrder.orderItem(order1);
+
+        var response = ("This is your order code is " + orderID);
+        var fromId = msg.from.id;
+        bot.sendMessage(fromId, response);
+      
+    
+    });
+    
+  });
+
+});
+
+});
+
+
+//alias cart ordering
+bot.onText(/\/aliascartorder(.+)/, function (msg, match) {
+  
+  var fromId = msg.from.id;
+  console.log("ordera");
+  //user.setId(msg.from.username);
+  user.setId("mdc");
+
+  var cartName = String(match[1].trim());
+  
+  //show the user the current cart, if he confirms, then I will create an ordering object and set everything. 
+  //if not then just return
+
+ dataB.getCartAliases(user)
+  .then(function(cart) {
+
+    console.log(cart[0]);
+      //var aliascart = cart[0];
+      var index = -1;
+
+      for(var i = 0; i< cart.length; i++){
+        console.log(cart[i].name);
+        console.log(cartName);
+
+        if(cart[i].name === cartName ){
+            index = i;
+            console.log("i is"+index);
+        }
+      }
+
+
+      if(index == -1){
+        console.log("return");
+        output = `Looks like this alias cart doesn't yet exist. `;
+        bot.sendMessage(fromId, output);
+        return;
+      }
+
+    });
+
+    var total = 0;
+
+    var items = dataB.getUserAliases(customer);
+    console.log("total "+total);
+    
+    //var cart = dataB.getUserCart(customer);
+
+      items.then(function() {
+
+        cart.then(function() {
+        
+          console.log(cart);
+          console.log(items);
+
+          for(var indexCart = 0; indexCart < cart.length; indexCart++){
+          
+              for(var indexItems = 0; indexItems < items.length; indexItems++){
+                
+                  if(cart[indexCart].name == items[indexItems].name){
+
+                    var id = items[indexItems].link.split('/dp/')[1];
+                    var price = getItemDataSync(id);
+                    price = price["price"];
+                    total += price;
+
+
+
+
+                  }
+                }
+              }
+            });
+          });
+        
+
+
+        var output = `Your total is $`+ total/100 + `
+        Are you user you want to order your ` + cartName+ `
+        
+        Type in either /yes or /no
+        `;
+        
+        bot.sendMessage(fromId, output);
+});
+
+
+// confirm alias cart ordering
+bot.onText(/\/confirm(.+)/, function (msg, match) {
+  var fromId = msg.from.id;
+  var customer = new Customer();
+
+
+  customer.setId(msg.from.username);
+  user.setId("mdc");
+
+  var items = dataB.getUserAliases(customer);
+  var userData = dataB.getUserData(customer);
+  var cart = dataB.getCartAliases(user);
+
+  userData.then(function(userDataResult) {
+
+    items.then(function() {
+
+      cart.then(function() {
+
+
+        var aliascart = JSON.parse(cart);
+        var index = -1;
+
+        for(var i = 0; i< aliascart.length; i++){
+          if(aliascart[i].name === cartName ){
+              index = i;
+          }
+        }
+
+        var aliasItems = JSON.parse(aliascart[index]);
+
+      
+        //console.log(cart);
+        //console.log(items);
+
+        var cart1 = new Cart();
+        var order1 = new Order();
+
+        var customer2 = new Customer();
+        customer2.setId(msg.from.username);
+
+        
+        for(var indexCart = 0; indexCart < cart.length; indexCart++){
+        
+            for(var indexItems = 0; indexItems < items.length; indexItems++){
+              
+                if(cart[indexCart].name == items[indexItems].name){
+                  
+                  var item = new Item();
+
+                  var id = items[indexItems].link.split('/dp/')[1]
+                  if (id.includes('/')) {
+                      id = id.split('/')[0]
+                  }
+
+                  item.setId(id);
+                  //item.setName(itemsResult[indexItems].name);
+                  //item.setCost(itemsResult[indexItems].cost);
+                  item.setLink(items[indexItems].link);
+                  cart1.addItem(item, cart[indexCart].quantity);
+                  
+
+                }
+
+        
+            }
+          
+        }
+
+        //console.log(userDataResult);
+        //console.log(paymentMethod);
+
+        customer2.setCart(cart1);
         customer2.setUsername(userDataResult.username);
         customer2.setPassword(userDataResult.password);
 
-        order.setPaymentMethod(paymentMethod);
-        order.setCustomer(customer2);
-        order.setIsGift(false);
-        order.setMaxPrice(1);
+        order1.setPaymentMethod(paymentMethod);
+        order1.setCustomer(customer2);
+        order1.setIsGift(false);
+        order1.setMaxPrice(1);
         var address = new Address();
 
         address.setAddressLine1(userDataResult.address_1);
@@ -812,8 +1051,8 @@ bot.onText(/\/confirm/, function (msg, type) {
       
         address.setPhoneNumber(userDataResult.phone_number);
 
-        order.setBillingAddress(address);
-        order.setShippingAddress(address);
+        order1.setBillingAddress(address);
+        order1.setShippingAddress(address);
 
         var orderID = productOrder.orderItem(order);
 
@@ -829,6 +1068,10 @@ bot.onText(/\/confirm/, function (msg, type) {
 });
 
 });
+
+
+
+
 
 
 

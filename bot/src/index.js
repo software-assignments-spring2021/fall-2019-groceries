@@ -22,7 +22,8 @@ var itemArray = [];
 var resultJSON;
 //To start: uncoment bot code and insert the token
 
-const token = "708748902:AAFYtQOlbhnotmb1mWZBIO7w7EJI5Yl_RSI";
+const token = "708748902:AAFYtQOlbhnotmb1mWZBIO7w7EJI5Yl_RSI"
+
 const bot = new TelegramBot(token, {polling: true});
 //bot commands and data post/get708748902:AAGhNOlWWgYlOk1vYqiCcmRuxpJk0hSl8Zk
 //var requestPr = new RequestProcessor();
@@ -484,47 +485,52 @@ bot.on("callback_query", (callbackQuery) => {
   if (action === '1') {
   
     item.push(itemArray[0]);
-    dataB.setUserItems(queryUser,item);
+    
     item = [];
-    text = 'Item added!';
+    text = 'www.amazon.com/dp/' + itemArray[0].getId();
     globalNum = 5;
     itemArray= [];
+    bot.sendMessage(userID,"Your link:"); 
     bot.sendMessage(userID,text); 
   }
   else if (action === '2') {
     item.push(itemArray[1]);
-    dataB.setUserItems(userID,item);
+    
     item = [];
-    text = 'Item added!';
+    text = 'www.amazon.com/dp/' + itemArray[1].getId();
     globalNum = 5;
     itemArray= [];
+    bot.sendMessage(userID,"Your link:"); 
     bot.sendMessage(userID,text);
   }
   else if (action === '3') {
     item.push(itemArray[2]);
-    dataB.setUserItems(userID,item);
+    
     item = [];
-    text = 'Item added!';
+    text = 'www.amazon.com/dp/' + itemArray[2].getId();
     globalNum = 5;
     itemArray= [];
+    bot.sendMessage(userID,"Your link:"); 
     bot.sendMessage(userID,text);
   }
   else if (action === '4') {
     item.push(itemArray[3]);
-    dataB.setUserItems(userID,item);
+    
     item = [];
-    text = 'Item added!';
+    text = 'www.amazon.com/dp/' + itemArray[3].getId();
     globalNum = 5;
     itemArray= [];
+    bot.sendMessage(userID,"Your link:"); 
     bot.sendMessage(userID,text);
   }
   else if (action === '5') {
     item.push(itemArray[4]);
-    dataB.setUserItems(userID,item);
+    
     item = [];
-    text = 'Item added!'
+    text = 'www.amazon.com/dp/' + itemArray[4].getId();
     globalNum = 5;
     itemArray= [];
+    bot.sendMessage(userID,"Your link:"); 
     bot.sendMessage(userID,text);
   }
   else if(action === 'Load more') {

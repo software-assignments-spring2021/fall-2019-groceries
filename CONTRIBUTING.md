@@ -1,4 +1,4 @@
-### CONTRIBUTING
+## CONTRIBUTING
 
 Prior to completion, contributions to this project are limited to Grocery team members only. This includes:
 
@@ -32,3 +32,24 @@ We will follow [this style of feature branching](https://knowledge.kitchen/Featu
 ## Values
 
 The Grocery Team pledges to abide by the [NYU Student Conduct Policy](https://www.nyu.edu/about/policies-guidelines-compliance/policies-and-guidelines/university-student-conduct-policy.html) and the Team Expecations & Norms listed above. The team will foster an environment that allows for and encourages team members to share opinions on the project to ensure that everyone's voice is heard evenly. Additionally, for emphasis, the team expects all members to reguraly check Slack to ensure that issues are resolved promptly. 
+
+
+## Building/Running
+
+ - Install node
+ - Start the Mongo server in it's own process/terminal with `cd backend; nodemon server`
+ - Start the Telegram bot in it's own process/terminal with `cd bot/src; node index.js`
+ - If either of the above steps fail due to dependency issues, run the following package installs (from our `.travis.yml`):
+ 
+ ```
+ - npm install --save-dev nyc mocha nodemon sinon mongoose request
+ - cd backend; npm install --save-dev nodemon
+ - cd ../productSearch; npm install --save-dev nyc mocha xmlhttprequest
+ - cd ../productOrder; npm install --save-dev nyc mocha xmlhttprequest
+ - cd ../bot; npm install --save-dev nyc mocha node-telegram-bot-api xmlhttprequest
+ ```
+ 
+ - Create a Telegram account if you do not already have one
+ - Add `@BuyStuffBot` as a contact 
+ - Once the bot is running, text it `/start` to start the bot
+ - Text the bot `/help` to see the list of commands and their formats

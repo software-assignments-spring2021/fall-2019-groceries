@@ -36,9 +36,10 @@ The Grocery Team pledges to abide by the [NYU Student Conduct Policy](https://ww
 
 ## Building/Running
 
- - Install node
- - Start the Mongo server in it's own process/terminal with `cd backend; nodemon server`
+ - Install node 
+ - Change the token string on line 25 of `bot/src/index.js` to the title of [issue #154](https://github.com/nyu-software-engineering/fall-2019-groceries/issues/154) in the repo or contact `Heorhii Skovorodnikov` to issue a new token in the event that the one on the issue was hijacked
  - Start the Telegram bot in it's own process/terminal with `cd bot/src; node index.js`
+ - Start the Mongo server in it's own process/terminal with `cd backend; nodemon server`
  - If either of the above steps fail due to dependency issues, run the following package installs (from our `.travis.yml`):
  
  ```

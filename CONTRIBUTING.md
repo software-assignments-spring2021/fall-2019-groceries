@@ -47,7 +47,7 @@ building/running a whole lot. To run and test our code, all you would need to do
 * This would be the method to build/run the program on your own personal machine.
 
  - Install node 
- - Change the token string on line 25 of `bot/src/index.js` to the title of [issue #154](https://github.com/nyu-software-engineering/fall-2019-groceries/issues/154) in the repo or contact `Heorhii Skovorodnikov` to issue a new token in the event that the one on the issue was hijacked
+ - Change the token string on line 25 of `bot/src/index.js` to the title of [issue #154](https://github.com/nyu-software-engineering/fall-2019-groceries/issues/154) in the repo. Current token: 708748902:AAGVilrBBpoXWlAt3c_hvAAvQ61hN-8PeYA. 
  - Start the Telegram bot in it's own process/terminal with `cd bot/src; node index.js`
  - Start the Mongo server in it's own process/terminal with `cd backend; nodemon server`
  - If either of the above steps fail due to dependency issues, run the following package installs (from our `.travis.yml`):
